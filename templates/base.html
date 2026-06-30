@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}AI-Solutions{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="{% url 'index' %}" class="nav-logo">AI<span>-</span>Solutions</a>
+      <div class="nav-menu" id="navMenu">
+        <a href="{% url 'index' %}"    class="nav-link {% block nav_home %}{% endblock %}">Home</a>
+        <a href="{% url 'services' %}" class="nav-link {% block nav_services %}{% endblock %}">Services</a>
+        <a href="{% url 'articles' %}" class="nav-link {% block nav_articles %}{% endblock %}">Articles</a>
+        <a href="{% url 'events' %}"   class="nav-link {% block nav_events %}{% endblock %}">Events</a>
+        <a href="{% url 'feedback' %}" class="nav-link {% block nav_feedback %}{% endblock %}">Feedback</a>
+        <a href="{% url 'contact' %}"  class="nav-link {% block nav_contact %}{% endblock %}">Contact Us</a>
+      </div>
+      <div class="nav-actions">
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  {% block content %}{% endblock %}
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">AI<span>-</span>Solutions</div>
+          <p class="footer-tagline">A web-based AI Services and Enquiry Management System providing service information, article publishing, event management, feedback collection, and administrative monitoring.</p>
+          <div class="footer-socials">
+            <a href="#" class="social-icon" aria-label="Twitter/X">𝕏</a>
+            <a href="#" class="social-icon" aria-label="LinkedIn">in</a>
+            <a href="#" class="social-icon" aria-label="GitHub">⌥</a>
+            <a href="#" class="social-icon" aria-label="YouTube">▶</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">Platform</div>
+          <div class="footer-links">
+            <a href="{% url 'index' %}">Home</a>
+            <a href="{% url 'services' %}">Services</a>
+            <a href="{% url 'articles' %}">Articles</a>
+            <a href="{% url 'events' %}">Events</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">User Features</div>
+          <div class="footer-links">
+            <a href="{% url 'contact' %}">Submit Enquiry</a>
+            <a href="{% url 'feedback' %}">Leave Feedback</a>
+            <a href="{% url 'events' %}">Register for Events</a>
+            <a href="{% url 'articles' %}">Read Articles</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">System</div>
+          <div class="footer-links">
+            <a href="{% url 'contact' %}">Contact Us</a>
+            <a href="{% url 'feedback' %}">Feedback</a>
+            <a href="{% url 'admin_login' %}">Admin Login</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copyright">© 2025 AI-Solutions. All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- CHATBOT WIDGET -->
+  <div class="chatbot-toggle" id="chatbotToggle" aria-label="Open AI Assistant">
+    <span class="chatbot-toggle-icon">💬</span>
+  </div>
+
+  <div class="chatbot-window" id="chatbotWindow" aria-hidden="true">
+    <div class="chatbot-header">
+      <div class="chatbot-header-info">
+        <div class="chatbot-avatar">🤖</div>
+        <div>
+          <div class="chatbot-title">AI Assistant</div>
+          <div class="chatbot-status">Online</div>
+        </div>
+      </div>
+      <button class="chatbot-close" id="chatbotClose" aria-label="Close">✕</button>
+    </div>
+    <div class="chatbot-messages" id="chatbotMessages">
+      <div class="chat-msg chat-msg--bot">
+        <span>Hello! Ask me anything about our AI services, articles, events, or how to submit an enquiry.</span>
+      </div>
+    </div>
+    <div class="chatbot-input-row">
+      <input type="text" id="chatbotInput" class="chatbot-input" placeholder="Type your question…" autocomplete="off">
+      <button class="chatbot-send" id="chatbotSend">Send</button>
+    </div>
+  </div>
+
+  <script src="{% static 'js/script.js' %}"></script>
+  <script>
+    // ── Chatbot Widget ──
+    const chatToggle  = document.getElementById('chatbotToggle');
+    const chatWindow  = document.getElementById('chatbotWindow');
+    const chatClose   = document.getElementById('chatbotClose');
+    const chatInput   = document.getElementById('chatbotInput');
+    const chatSend    = document.getElementById('chatbotSend');
+    const chatMessages= document.getElementById('chatbotMessages');
+
+    function openChat()  { chatWindow.classList.add('open'); chatToggle.classList.add('hidden'); chatInput.focus(); }
+    function closeChat() { chatWindow.classList.remove('open'); chatToggle.classList.remove('hidden'); }
+
+    chatToggle.addEventListener('click', openChat);
+    chatClose.addEventListener('click', closeChat);
+
+    function appendMsg(text, type) {
+      const el = document.createElement('div');
+      el.className = `chat-msg chat-msg--${type}`;
+      el.innerHTML = `<span>${text}</span>`;
+      chatMessages.appendChild(el);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function sendMessage() {
+      const q = chatInput.value.trim();
+      if (!q) return;
+      appendMsg(q, 'user');
+      chatInput.value = '';
+      appendMsg('…', 'bot loading');
+      fetch('/ajax/chatbot/query/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': '{{ csrf_token }}' },
+        body: 'question=' + encodeURIComponent(q)
+      })
+      .then(r => r.json())
+      .then(d => {
+        const loading = chatMessages.querySelector('.loading');
+        if (loading) loading.remove();
+        appendMsg(d.answer || "Sorry, I don't have an answer for that right now.", 'bot');
+      })
+      .catch(() => {
+        const loading = chatMessages.querySelector('.loading');
+        if (loading) loading.remove();
+        appendMsg("Sorry, something went wrong. Please try again.", 'bot');
+      });
+    }
+
+    chatSend.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

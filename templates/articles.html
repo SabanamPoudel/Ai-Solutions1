@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Articles — AI-Solutions{% endblock %}
+{% block nav_articles %}active{% endblock %}
+
+{% block content %}
+
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-hero-content">
+        <h1 class="page-hero-title">Articles &amp; Resources</h1>
+        <p class="page-hero-subtitle">Educational articles covering artificial intelligence concepts, intelligent system design, machine learning techniques, and practical AI applications.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--light">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-headline">Core AI Concepts</h2>
+        <p class="section-subtext">Introductory and intermediate resources for understanding modern artificial intelligence systems.</p>
+      </div>
+
+      <div class="grid-3">
+        {% for article in articles %}
+        <article class="article-card">
+          {% if article.image %}
+          <img src="{{ article.image.url }}" alt="{{ article.title }}" class="article-image">
+          {% elif article.image_url %}
+          <img src="{{ article.image_url }}" alt="{{ article.title }}" class="article-image">
+          {% else %}
+          <div class="article-image-shell">
+            <span>{{ article.category }}</span>
+          </div>
+          {% endif %}
+          <div class="article-body">
+            <h3 class="article-title">{{ article.title }}</h3>
+            <p class="article-excerpt">{{ article.excerpt }}</p>
+            <button type="button"
+                    class="read-more article-read-more"
+                    data-title="{{ article.title|escapejs }}"
+                    data-category="{{ article.category|escapejs }}"
+                    data-content="{% if article.content %}{{ article.content|escapejs }}{% else %}{{ article.excerpt|escapejs }}{% endif %}">
+              Read More
+            </button>
+          </div>
+        </article>
+        {% empty %}
+        <article class="article-card">
+          <div class="article-image-shell"><span>Fundamentals</span></div>
+          <div class="article-body">
+            <span class="category-pill">Fundamentals</span>
+            <h3 class="article-title">Introduction to Artificial Intelligence</h3>
+            <p class="article-excerpt">An overview of artificial intelligence, its history, and the key branches that shape the field today.</p>
+            <button type="button"
+                    class="read-more article-read-more"
+                    data-title="Introduction to Artificial Intelligence"
+                    data-category="Fundamentals"
+                    data-content="An overview of artificial intelligence, its history, and the key branches that shape the field today.">
+              Read More
+            </button>
+          </div>
+        </article>
+        <article class="article-card">
+          <div class="article-image-shell"><span>Machine Learning</span></div>
+          <div class="article-body">
+            <span class="category-pill">Machine Learning</span>
+            <h3 class="article-title">Machine Learning Applications</h3>
+            <p class="article-excerpt">A concise look at supervised, unsupervised, and reinforcement learning approaches in practice.</p>
+            <button type="button"
+                    class="read-more article-read-more"
+                    data-title="Machine Learning Applications"
+                    data-category="Machine Learning"
+                    data-content="A concise look at supervised, unsupervised, and reinforcement learning approaches in practice.">
+              Read More
+            </button>
+          </div>
+        </article>
+        <article class="article-card">
+          <div class="article-image-shell"><span>Applications</span></div>
+          <div class="article-body">
+            <span class="category-pill">Applications</span>
+            <h3 class="article-title">AI in Healthcare and Transportation</h3>
+            <p class="article-excerpt">How AI supports diagnostics, outcome prediction, route optimisation, and operational decision-making.</p>
+            <button type="button"
+                    class="read-more article-read-more"
+                    data-title="AI in Healthcare and Transportation"
+                    data-category="Applications"
+                    data-content="How AI supports diagnostics, outcome prediction, route optimisation, and operational decision-making.">
+              Read More
+            </button>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-banner">
+    <div class="container">
+      <h2 class="section-headline">Explore More AI Knowledge</h2>
+      <p class="section-subtext">Continue expanding your understanding of AI concepts, system design methods, and intelligent technologies.</p>
+      <div class="cta-banner-actions">
+        <a href="{% url 'contact' %}" class="btn btn-primary">Submit an Enquiry</a>
+        <a href="{% url 'events' %}" class="btn btn-secondary">Upcoming Events</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="site-modal" id="articleModal" aria-hidden="true">
+    <div class="site-modal-panel" role="dialog" aria-modal="true" aria-labelledby="articleModalTitle">
+      <button type="button" class="site-modal-close" aria-label="Close article">&times;</button>
+      <span class="category-pill" id="articleModalCategory"></span>
+      <h2 class="site-modal-title" id="articleModalTitle"></h2>
+      <p class="site-modal-text" id="articleModalContent"></p>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    const modal = document.getElementById('articleModal');
+    const title = document.getElementById('articleModalTitle');
+    const category = document.getElementById('articleModalCategory');
+    const content = document.getElementById('articleModalContent');
+    const closeBtn = modal.querySelector('.site-modal-close');
+
+    function openArticleModal(button) {
+      title.textContent = button.dataset.title || 'Article';
+      category.textContent = button.dataset.category || 'Article';
+      content.textContent = button.dataset.content || 'Full content has not been added yet.';
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      closeBtn.focus();
+    }
+
+    function closeArticleModal() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    document.querySelectorAll('.article-read-more').forEach(button => {
+      button.addEventListener('click', () => openArticleModal(button));
+    });
+    closeBtn.addEventListener('click', closeArticleModal);
+    modal.addEventListener('click', event => {
+      if (event.target === modal) closeArticleModal();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && modal.classList.contains('open')) closeArticleModal();
+    });
+  })();
+</script>
+{% endblock %}

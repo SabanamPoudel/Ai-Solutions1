@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Services — AI-Solutions{% endblock %}
+{% block nav_services %}active{% endblock %}
+
+{% block content %}
+
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-hero-content">
+        <h1 class="page-hero-title">Our AI Services</h1>
+        <p class="page-hero-subtitle">A comprehensive suite of AI-powered services designed to support intelligent decision-making, automate complex processes, and deliver data-driven solutions for real-world applications.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--light">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-headline">Available AI Services</h2>
+        <p class="section-subtext">Explore the range of AI services offered through this platform. Submit an enquiry to discuss how any of these services can support your project or research goals.</p>
+      </div>
+      <div class="grid-3">
+        {% for service in services %}
+        <div class="card">
+          {% if service.image %}
+          <img src="{{ service.image.url }}" alt="{{ service.title }}" class="service-card-image">
+          {% endif %}
+          <div class="card-icon">{{ service.icon }}</div>
+          <h3 class="card-title">{{ service.title }}</h3>
+          <p class="card-description">{{ service.description }}</p>
+        </div>
+        {% empty %}
+        <div class="card">
+          <div class="card-icon">🤖</div>
+          <h3 class="card-title">AI Consultation</h3>
+          <p class="card-description">Expert guidance on AI selection, planning, and adoption for your domain and objectives.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚙️</div>
+          <h3 class="card-title">Machine Learning Solutions</h3>
+          <p class="card-description">Custom ML models for classification, prediction, and pattern recognition tasks across industries.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <h3 class="card-title">Data Analytics</h3>
+          <p class="card-description">Transform raw data into meaningful insights through trend identification and visualisation.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔄</div>
+          <h3 class="card-title">Business Automation</h3>
+          <p class="card-description">Intelligent automation to reduce repetitive tasks and improve operational efficiency.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔍</div>
+          <h3 class="card-title">Decision Support Systems</h3>
+          <p class="card-description">AI-powered tools to help organisations make faster, more informed decisions from large data sets.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🧠</div>
+          <h3 class="card-title">Neural Network Design</h3>
+          <p class="card-description">Design and training of custom neural architectures for NLP, image recognition, and predictive modelling.</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-headline">Our Development Process</h2>
+        <p class="section-subtext">A structured four-phase methodology guiding AI system development from initial requirements through to ongoing performance monitoring.</p>
+      </div>
+      <div class="grid-4">
+        <div class="card">
+          <div class="card-icon">🔍</div>
+          <h3 class="card-title">Requirement Analysis</h3>
+          <p class="card-description">Gathering and analysing functional and non-functional requirements from stakeholders to define the scope, objectives, and constraints of the AI system.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🛠️</div>
+          <h3 class="card-title">Solution Development</h3>
+          <p class="card-description">Designing and building the AI solution based on specified requirements, covering model selection, data preparation, and iterative testing.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🚀</div>
+          <h3 class="card-title">System Implementation</h3>
+          <p class="card-description">Deploying the developed AI system into the target environment with integration testing and user acceptance validation.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📈</div>
+          <h3 class="card-title">Performance Monitoring</h3>
+          <p class="card-description">Continuously evaluating the system against defined performance metrics to maintain accuracy, reliability, and effectiveness over time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-banner">
+    <div class="container">
+      <h2 class="section-headline">Interested in Our AI Services?</h2>
+      <p class="section-subtext">Submit an enquiry to learn more about how these services can support your AI project or research objectives.</p>
+      <div class="cta-banner-actions">
+        <a href="{% url 'contact' %}" class="btn btn-primary">Submit an Enquiry</a>
+        <a href="{% url 'articles' %}" class="btn btn-secondary">Explore Articles</a>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

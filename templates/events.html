@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Events - AI-Solutions{% endblock %}
+{% block nav_events %}active{% endblock %}
+
+{% block content %}
+
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-hero-content">
+        <h1 class="page-hero-title">Events &amp; Gallery</h1>
+        <p class="page-hero-subtitle">Explore workshops, seminars, and conferences focused on artificial intelligence, machine learning, intelligent systems, and data science.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--light">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-headline">Upcoming Events</h2>
+        <p class="section-subtext">Register for upcoming AI workshops, research seminars, and technology events.</p>
+      </div>
+
+      <div class="events-list">
+        {% for event in upcoming_events %}
+        <article class="event-card">
+          {% if event.image %}
+          <img src="{{ event.image.url }}" alt="{{ event.title }}" class="event-card-image">
+          {% endif %}
+          <div class="event-date-badge">
+            <div class="event-day">{{ event.event_date|date:"d" }}</div>
+            <div class="event-month">{{ event.event_date|date:"M Y" }}</div>
+          </div>
+          <div class="event-info">
+            <div class="event-type">{{ event.event_type }}</div>
+            <h3 class="event-title">{{ event.title }}</h3>
+            <p class="event-location">{{ event.location }}</p>
+            <p class="card-description">{{ event.description }}</p>
+            <div class="event-action">
+              <a href="{% url 'contact' %}?event={{ event.title|urlencode }}&date={{ event.event_date|date:'Y-m-d'|urlencode }}&location={{ event.location|urlencode }}" class="btn btn-primary">Register Now</a>
+            </div>
+          </div>
+        </article>
+        {% empty %}
+        <article class="event-card">
+          <div class="event-date-badge">
+            <div class="event-day">15</div>
+            <div class="event-month">May 2025</div>
+          </div>
+          <div class="event-info">
+            <div class="event-type">Conference</div>
+            <h3 class="event-title">Artificial Intelligence Conference 2025</h3>
+            <p class="event-location">Technology Innovation Centre, London, UK</p>
+            <p class="card-description">A research-focused conference bringing together academics, students, and practitioners to discuss advances in artificial intelligence.</p>
+            <div class="event-action">
+              <a href="{% url 'contact' %}?event=Artificial%20Intelligence%20Conference%202025&date=2025-05-15&location=Technology%20Innovation%20Centre%2C%20London%2C%20UK" class="btn btn-primary">Register Now</a>
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-headline">Previous AI Events</h2>
+        <p class="section-subtext">A brief look back at previous workshops, research seminars, and technology events.</p>
+      </div>
+
+      <div class="gallery-grid" id="pastEventsGrid">
+        {% for event in past_events %}
+        <button type="button" class="gallery-item gallery-item-clickable" data-template-id="past-event-template-{{ event.pk }}">
+          {% if event.image %}
+          <img src="{{ event.image.url }}" alt="{{ event.title }}">
+          {% elif event.gallery_images.first %}
+          <img src="{{ event.gallery_images.first.image.url }}" alt="{{ event.title }}">
+          {% else %}
+          <div class="gallery-placeholder"><span>{{ event.title }}</span></div>
+          {% endif %}
+          <div class="gallery-item-caption">{{ event.title }}</div>
+        </button>
+        <template id="past-event-template-{{ event.pk }}">
+          <span class="event-type">{{ event.event_type }}</span>
+          <h2 class="site-modal-title">{{ event.title }}</h2>
+          <p class="event-location">{{ event.event_date|date:"d M Y" }}{% if event.location %} · {{ event.location }}{% endif %}</p>
+          <p class="site-modal-text">{{ event.description }}</p>
+          <div class="event-modal-gallery">
+            {% if event.image %}
+            <img src="{{ event.image.url }}" alt="{{ event.title }}">
+            {% endif %}
+            {% for event_image in event.gallery_images.all %}
+            <img src="{{ event_image.image.url }}" alt="{% if event_image.caption %}{{ event_image.caption }}{% else %}{{ event.title }}{% endif %}">
+            {% endfor %}
+          </div>
+        </template>
+        {% empty %}
+        <div class="gallery-item gallery-placeholder"><span>AI Workshop 2024</span></div>
+        <div class="gallery-item gallery-placeholder"><span>Machine Learning Seminar</span></div>
+        <div class="gallery-item gallery-placeholder"><span>AI Conference 2024</span></div>
+        <div class="gallery-item gallery-placeholder"><span>Research Symposium</span></div>
+        <div class="gallery-item gallery-placeholder"><span>Data Science Webinar</span></div>
+        <div class="gallery-item gallery-placeholder"><span>Deep Learning Workshop</span></div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-banner">
+    <div class="container">
+      <h2 class="section-headline">Explore Upcoming AI Events</h2>
+      <p class="section-subtext">Register for workshops, seminars, and research conferences to expand your knowledge of artificial intelligence technologies.</p>
+      <div class="cta-banner-actions">
+        <a href="{% url 'contact' %}" class="btn btn-primary">Submit an Enquiry</a>
+        <a href="{% url 'articles' %}" class="btn btn-secondary">Read Articles</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="site-modal" id="eventModal" aria-hidden="true">
+    <div class="site-modal-panel site-modal-panel-wide" role="dialog" aria-modal="true" aria-labelledby="eventModalContent">
+      <button type="button" class="site-modal-close" aria-label="Close event">&times;</button>
+      <div id="eventModalContent"></div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    const modal = document.getElementById('eventModal');
+    const content = document.getElementById('eventModalContent');
+    const closeBtn = modal.querySelector('.site-modal-close');
+
+    function openEventModal(templateId) {
+      const template = document.getElementById(templateId);
+      if (!template) return;
+      content.innerHTML = '';
+      content.appendChild(template.content.cloneNode(true));
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      closeBtn.focus();
+    }
+
+    function closeEventModal() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      content.innerHTML = '';
+    }
+
+    document.querySelectorAll('[data-template-id]').forEach(tile => {
+      tile.addEventListener('click', () => openEventModal(tile.dataset.templateId));
+    });
+    closeBtn.addEventListener('click', closeEventModal);
+    modal.addEventListener('click', event => {
+      if (event.target === modal) closeEventModal();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && modal.classList.contains('open')) closeEventModal();
+    });
+  })();
+</script>
+{% endblock %}

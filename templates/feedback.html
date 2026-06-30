@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Feedback - AI-Solutions{% endblock %}
+{% block nav_feedback %}active{% endblock %}
+
+{% block content %}
+
+  <!-- PAGE HERO — two column layout -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="feedback-hero-grid">
+        <div class="page-hero-content">
+          <h1 class="page-hero-title">Share Your Feedback</h1>
+          <p class="page-hero-subtitle">Help us evaluate and improve the AI Solutions platform. Your feedback on usability, content quality, and system functionality contributes directly to the ongoing development of this system.</p>
+        </div>
+        <div class="feedback-hero-stats">
+          <div class="fh-stat">
+            <div class="fh-stat-val">4.9</div>
+            <div class="fh-stat-label">Average Rating</div>
+          </div>
+          <div class="fh-stat">
+            <div class="fh-stat-val">150+</div>
+            <div class="fh-stat-label">Responses</div>
+          </div>
+          <div class="fh-stat">
+            <div class="fh-stat-val">98%</div>
+            <div class="fh-stat-label">Positive</div>
+          </div>
+          <div class="fh-stat">
+            <div class="fh-stat-val">96%</div>
+            <div class="fh-stat-label">Found Useful</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORM + SIDEBAR — two column -->
+  <section class="section section--light">
+    <div class="container">
+      <div class="feedback-form-grid">
+
+        <!-- LEFT: Form -->
+        <div>
+          <div class="form-intro">
+            <h2 class="form-title">Rate Your Experience</h2>
+            <p class="form-subtext">All fields are required. Submitted feedback will be reviewed before being published.</p>
+          </div>
+
+          {% if success %}
+          <div class="success-msg show">
+            <div class="success-icon">✅</div>
+            <h3>Feedback Submitted!</h3>
+            <p>Thank you. Your feedback has been received and will be reviewed by the administrator shortly.</p>
+          </div>
+          <div class="form-submit-row">
+            <a href="{% url 'feedback' %}" class="btn btn-primary">Submit Another</a>
+          </div>
+          {% else %}
+          <form class="contact-form" id="feedbackForm" method="POST" action="{% url 'feedback' %}">
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div class="form-error-banner">Please correct the errors below before submitting.</div>
+            {% endif %}
+
+            <div class="form-group">
+              <label class="form-label" for="id_full_name">Full Name</label>
+              {{ form.full_name }}
+              {% if form.full_name.errors %}<p class="field-error">{{ form.full_name.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="id_email">Email Address</label>
+              {{ form.email }}
+              {% if form.email.errors %}<p class="field-error">{{ form.email.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="id_rating">Rating (1–5 stars)</label>
+              {{ form.rating }}
+              {% if form.rating.errors %}<p class="field-error">{{ form.rating.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="id_message">Feedback Message</label>
+              {{ form.message }}
+              {% if form.message.errors %}<p class="field-error">{{ form.message.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="form-group form-submit-row">
+              <button type="submit" class="btn btn-primary btn-full">Submit Feedback</button>
+            </div>
+          </form>
+          {% endif %}
+        </div>
+
+        <!-- RIGHT: Why it matters -->
+        <div class="feedback-sidebar">
+          <div class="feedback-info-card">
+            <div class="card-icon">📋</div>
+            <h3 class="card-title">Why Your Feedback Matters</h3>
+            <p class="card-description">Your responses help the development team identify areas for improvement and validate what is working well across the platform.</p>
+          </div>
+          <div class="feedback-info-card">
+            <div class="card-icon">🔍</div>
+            <h3 class="card-title">How It's Reviewed</h3>
+            <p class="card-description">All submitted feedback is reviewed by the administrator. Approved entries are published publicly in the user reviews section below.</p>
+          </div>
+          <div class="feedback-info-card">
+            <div class="card-icon">✅</div>
+            <h3 class="card-title">What to Include</h3>
+            <p class="card-description">Rate your overall experience from 1 to 5 and describe what you found useful, difficult, or worth improving about the platform.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- USER REVIEWS -->
+  <section class="section section--dark">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-headline">What Users Are Saying</h2>
+        <p class="section-subtext">Feedback submitted by users on their experience with the AI Solutions platform, including navigation, content quality, and system usability.</p>
+      </div>
+      <div class="grid-3">
+        {% if approved_feedback %}
+          {% for fb in approved_feedback %}
+          <div class="testimonial-card">
+            <div class="quote-mark">"</div>
+            <div class="star-rating">{{ fb.stars }}</div>
+            <p class="testimonial-text">{{ fb.message }}</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">👤</div>
+              <div>
+                <div class="author-name">{{ fb.full_name }}</div>
+                <div class="author-role">Platform User</div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="testimonial-card">
+            <div class="quote-mark">"</div>
+            <div class="star-rating">★★★★★</div>
+            <p class="testimonial-text">The platform provides clear and well-structured information about AI services. Navigation is straightforward and I was able to submit an enquiry without any difficulty.</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">👤</div>
+              <div><div class="author-name">John Smith</div><div class="author-role">Platform User</div></div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="quote-mark">"</div>
+            <div class="star-rating">★★★★★</div>
+            <p class="testimonial-text">The articles section covers AI topics in a clear and accessible way. The event registration process was also simple and responsive on both desktop and mobile.</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">👤</div>
+              <div><div class="author-name">Aisha Patel</div><div class="author-role">Platform User</div></div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="quote-mark">"</div>
+            <div class="star-rating">★★★★★</div>
+            <p class="testimonial-text">I found the services section very helpful for understanding the AI solutions available. Overall a well-designed and functional system suitable for academic demonstration.</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">👤</div>
+              <div><div class="author-name">Marcus Webb</div><div class="author-role">Platform User</div></div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-banner">
+    <div class="container">
+      <h2 class="section-headline">Share Your Website Experience</h2>
+      <p class="section-subtext">Your feedback helps evaluate and improve the AI Solutions platform. Submit your rating and comments to contribute to its ongoing refinement.</p>
+      <div class="cta-banner-actions">
+        <a href="{% url 'feedback' %}" class="btn btn-primary">Submit Your Feedback</a>
+        <a href="{% url 'services' %}" class="btn btn-secondary">Explore AI Services</a>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

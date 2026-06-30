@@ -1,0 +1,1282 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — AI-Solutions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    .admin-section-block { margin-bottom: 48px; }
+
+    /* ── Sidebar layout ── */
+    .admin-layout { display: flex; align-items: flex-start; max-width: 1320px; margin: 0 auto; }
+    .admin-sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+      overflow-y: auto;
+      padding: 32px 16px 32px 32px;
+      box-sizing: border-box;
+    }
+    .admin-sidebar-label {
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-muted); margin: 24px 0 10px; padding: 0 12px;
+    }
+    .admin-sidebar-label:first-child { margin-top: 0; }
+    .admin-sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
+    .sidebar-link {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border-radius: 8px;
+      font-size: 14px; font-weight: 500; color: var(--text-secondary);
+      text-decoration: none; transition: background 0.15s, color 0.15s;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-link:hover { background: var(--bg-card); color: var(--text-primary); }
+    .sidebar-link.active { background: var(--accent-subtle); color: var(--accent); border-left-color: var(--accent); font-weight: 600; }
+    .sidebar-link-danger:hover { background: rgba(239,68,68,0.08); color: #ef4444; }
+    .sidebar-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+    .sidebar-caret { margin-left: auto; font-size: 11px; color: var(--text-muted); transition: transform 0.15s; }
+    .sidebar-caret.open { transform: rotate(180deg); }
+    .sidebar-submenu { display: none; flex-direction: column; gap: 2px; margin: 2px 0 2px 18px; padding-left: 10px; border-left: 2px solid var(--border); }
+    .sidebar-submenu.open { display: flex; }
+    .sidebar-sublink { font-size: 13px; padding: 8px 12px; }
+    .admin-main { flex: 1; min-width: 0; padding: 36px 32px 56px; }
+
+    @media (max-width: 880px) {
+      .admin-layout { flex-direction: column; }
+      .admin-sidebar { width: 100%; position: static; height: auto; padding: 20px 14px 8px; }
+      .admin-sidebar-nav { flex-direction: row; flex-wrap: wrap; }
+      .sidebar-link { border-left: none; border-bottom: 3px solid transparent; }
+      .sidebar-link.active { border-left-color: transparent; border-bottom-color: var(--accent); }
+      .admin-main { padding: 20px 14px 40px; }
+    }
+
+    .dashboard-managed { display: none; }
+    .dashboard-managed.is-active { display: block; }
+    .content-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; margin-top: 18px; overflow: hidden; }
+    .content-panel-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; border-bottom: 1px solid var(--border); }
+    .content-panel-title { margin: 0; font-size: 16px; font-weight: 700; color: var(--text-primary); }
+    .content-panel-sub { margin: 4px 0 0; font-size: 13px; color: var(--text-secondary); }
+    .content-table { width: 100%; border-collapse: collapse; }
+    .content-table th, .content-table td { padding: 13px 16px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+    .content-table th { color: var(--text-secondary); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px; }
+    .content-table tr:last-child td { border-bottom: 0; }
+    .content-thumb { width: 48px; height: 40px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); background: #f3f6fa; display: block; }
+    .content-thumb-empty { width: 48px; height: 40px; border-radius: 6px; border: 1px solid var(--border); background: #f3f6fa; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 11px; }
+    .content-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .btn-xs { font-size: 12px; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text-primary); font-family: inherit; cursor: pointer; transition: border-color 0.2s; }
+    .btn-xs:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-xs.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn-xs.danger { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #ef4444; }
+    .analytics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 20px; }
+    .analytics-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .analytics-card .a-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .analytics-card .a-value { font-size: 28px; font-weight: 700; color: var(--text-primary); }
+    .analytics-card .a-trend { font-size: 12px; color: #22c55e; margin-top: 4px; }
+    .feedback-review-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    .feedback-review-table th, .feedback-review-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .feedback-review-table th { color: var(--text-secondary); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px; }
+    .feedback-review-table td { color: var(--text-primary); }
+    .status-pill.status-approved { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .status-pill.status-pending { background: rgba(234,179,8,0.15); color: #eab308; }
+    .status-pill.status-under-review { background: rgba(59,130,246,0.15); color: #3b82f6; }
+    .status-pill.status-responded { background: rgba(124,58,237,0.15); color: #a78bfa; }
+    .status-pill.status-closed { background: rgba(107,114,128,0.15); color: #9ca3af; }
+    .status-pill.status-rejected { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .status-pill.status-published { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .status-pill.status-draft { background: rgba(107,114,128,0.15); color: #9ca3af; }
+    select.status-select { font-size: 12px; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-primary); font-family: inherit; cursor: pointer; }
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; }
+    .modal-overlay.open { display:flex; }
+    .modal-box { background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:32px; max-width:620px; width:90%; max-height:88vh; overflow:auto; }
+    .modal-box h3 { margin:0 0 8px; color:var(--text-primary); font-size:18px; }
+    .modal-box p { color:var(--text-secondary); font-size:13px; margin:0 0 20px; }
+    .modal-box textarea, .modal-box input, .modal-box select { width:100%; padding:10px 14px; border-radius:8px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-primary); font-family:inherit; font-size:14px; box-sizing:border-box; margin-bottom:16px; }
+    .modal-box textarea { resize:vertical; min-height:100px; }
+    .modal-actions { display:flex; gap:10px; justify-content:flex-end; }
+    .chatbot-table { width:100%; border-collapse:collapse; margin-top:16px; }
+    .chatbot-table th, .chatbot-table td { padding:12px 16px; text-align:left; border-bottom:1px solid var(--border); font-size:13px; }
+    .chatbot-table th { color:var(--text-secondary); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.4px; }
+  </style>
+</head>
+<body class="admin-dashboard">
+
+  <div class="admin-topbar">
+    <div class="admin-brand">AI<span>-</span>Solutions <span style="color:var(--text-secondary); font-weight:400; font-size:14px; margin-left:8px;">/ Admin Dashboard</span></div>
+    <a href="{% url 'admin_logout' %}" class="btn btn-secondary" style="font-size:14px; padding:8px 18px;">Logout</a>
+  </div>
+
+  <div class="admin-layout">
+
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-label">Navigate</div>
+      <nav class="admin-sidebar-nav">
+        <a href="#" class="sidebar-link active" data-target="home" onclick="goToSection(event, 'home')">
+          <span class="sidebar-icon">📊</span>Overview &amp; Analytics
+        </a>
+        <a href="#" class="sidebar-link" data-target="section-enquiries" onclick="goToSection(event, 'section-enquiries')">
+          <span class="sidebar-icon">📋</span>Enquiries
+        </a>
+        <a href="#" class="sidebar-link" data-target="section-feedback" onclick="goToSection(event, 'section-feedback')">
+          <span class="sidebar-icon">💬</span>Feedback
+        </a>
+        <a href="#" class="sidebar-link" id="contentDropdownToggle" onclick="toggleContentDropdown(event)">
+          <span class="sidebar-icon">📰</span>Content
+          <span class="sidebar-caret" id="contentCaret">▾</span>
+        </a>
+        <div class="sidebar-submenu" id="contentSubmenu">
+          <a href="#" class="sidebar-link sidebar-sublink" data-target="section-content-articles" onclick="goToSection(event, 'section-content-articles')">Articles</a>
+          <a href="#" class="sidebar-link sidebar-sublink" data-target="section-content-events" onclick="goToSection(event, 'section-content-events')">Events</a>
+          <a href="#" class="sidebar-link sidebar-sublink" data-target="section-content-services" onclick="goToSection(event, 'section-content-services')">AI Services</a>
+        </div>
+        <a href="#" class="sidebar-link" data-target="section-chatbot" onclick="goToSection(event, 'section-chatbot')">
+          <span class="sidebar-icon">🗨️</span>Chatbot
+        </a>
+      </nav>
+
+      <div class="admin-sidebar-label">System</div>
+      <nav class="admin-sidebar-nav">
+        <a href="/django-admin/" class="sidebar-link" style="display:none;">
+          <span class="sidebar-icon">⚙️</span>Django Admin
+        </a>
+        <a href="{% url 'admin_logout' %}" class="sidebar-link sidebar-link-danger">
+          <span class="sidebar-icon">🔒</span>Logout
+        </a>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+
+    <!-- 1. HEADER -->
+    <div class="admin-section-block">
+      <h1 class="admin-page-title">Admin Control Panel</h1>
+      <p class="admin-page-sub">Welcome, {{ request.user.username|title }}. This home view shows the system overview and analytics report. Use the left menu to open enquiries, feedback, content, or chatbot management.</p>
+    </div>
+
+    <!-- 2. STATISTICS (live from database) -->
+    <div class="admin-section-block dashboard-managed is-active" id="section-overview" data-view="home">
+      <h2 class="admin-section-title">System Overview</h2>
+      <div class="admin-stats-row">
+        <div class="admin-stat">
+          <div class="admin-stat-label">Total Enquiries</div>
+          <div class="admin-stat-val">{{ total_enquiries }}</div>
+        </div>
+        <div class="admin-stat">
+          <div class="admin-stat-label">Pending Enquiries</div>
+          <div class="admin-stat-val">{{ pending_enquiries }}</div>
+        </div>
+        <div class="admin-stat">
+          <div class="admin-stat-label">Feedback Received</div>
+          <div class="admin-stat-val">{{ total_feedback }}</div>
+        </div>
+        <div class="admin-stat">
+          <div class="admin-stat-label">Published Articles</div>
+          <div class="admin-stat-val">{{ published_articles }}</div>
+        </div>
+        <div class="admin-stat">
+          <div class="admin-stat-label">Upcoming Events</div>
+          <div class="admin-stat-val">{{ upcoming_events }}</div>
+        </div>
+        <div class="admin-stat">
+          <div class="admin-stat-label">Active AI Services</div>
+          <div class="admin-stat-val">{{ active_services }}</div>
+        </div>
+        <div class="admin-stat">
+          <div class="admin-stat-label">Approved Feedback</div>
+          <div class="admin-stat-val">{{ approved_feedback_count }}</div>
+        </div>
+        <div class="admin-stat">
+          <div class="admin-stat-label">Chatbot Responses</div>
+          <div class="admin-stat-val">{{ chatbot_responses }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. ENQUIRY MANAGEMENT (live) -->
+    <div class="admin-section-block dashboard-managed" id="section-enquiries" data-view="section-enquiries">
+      <h2 class="admin-section-title">Enquiry Management</h2>
+      <p class="admin-page-sub" style="margin-bottom:16px;">Review and process enquiries submitted through the Contact Us page. Update each enquiry status as it moves through the review workflow.</p>
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>User Name</th>
+              <th>Email</th>
+              <th>Subject</th>
+              <th>Date Submitted</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for enq in enquiries %}
+            <tr id="enq-row-{{ enq.pk }}" class="{% if forloop.counter > 6 %}enq-extra-row{% endif %}" {% if forloop.counter > 6 %}style="display:none;"{% endif %}>
+              <td style="color:var(--text-secondary);">{{ forloop.counter }}</td>
+              <td>{{ enq.full_name }}</td>
+              <td style="font-size:12px; color:var(--text-secondary);">{{ enq.email }}</td>
+              <td>{{ enq.subject|truncatechars:50 }}</td>
+              <td>{{ enq.submitted_at|date:"d M Y" }}</td>
+              <td>
+                <select class="status-select" onchange="updateEnquiryStatus({{ enq.pk }}, this.value)">
+                  {% for val, label in enq.STATUS_CHOICES %}
+                  <option value="{{ val }}" {% if enq.status == val %}selected{% endif %}>{{ label }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+              <td style="display:flex; gap:6px;">
+                <button class="btn-xs" onclick="viewEnquiry({{ enq.pk }}, '{{ enq.full_name|escapejs }}', '{{ enq.email|escapejs }}', '{{ enq.subject|escapejs }}', '{{ enq.message|escapejs }}')">View</button>
+                <button class="btn-xs danger" onclick="deleteEnquiry({{ enq.pk }})">Delete</button>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" style="text-align:center; color:var(--text-secondary); padding:24px;">No enquiries submitted yet.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if enquiries|length > 6 %}
+      <div style="text-align:center; margin-top:14px;">
+        <button class="btn-xs" id="enqToggleBtn" onclick="toggleExtraRows('enq-extra-row', 'enqToggleBtn', {{ enquiries|length }})">View All ({{ enquiries|length }})</button>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- 5. FEEDBACK MANAGEMENT (live) -->
+    <div class="admin-section-block dashboard-managed" id="section-feedback" data-view="section-feedback">
+      <h2 class="admin-section-title">Feedback Management</h2>
+      <p class="admin-page-sub" style="margin-bottom:16px;">Review and moderate user feedback submitted through the Feedback page. Approve or reject entries before they appear in the public feedback display section.</p>
+      <div class="table-wrap">
+        <table class="feedback-review-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>User Name</th>
+              <th>Email</th>
+              <th>Rating</th>
+              <th>Feedback Summary</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for fb in feedbacks %}
+            <tr id="fb-row-{{ fb.pk }}" class="{% if forloop.counter > 6 %}fb-extra-row{% endif %}" {% if forloop.counter > 6 %}style="display:none;"{% endif %}>
+              <td style="color:var(--text-secondary);">{{ forloop.counter }}</td>
+              <td>{{ fb.full_name }}</td>
+              <td>{{ fb.email }}</td>
+              <td>{{ fb.stars }}</td>
+              <td>{{ fb.message|truncatechars:55 }}</td>
+              <td>{{ fb.submitted_at|date:"d M Y" }}</td>
+              <td>
+                <select class="status-select" onchange="updateFeedbackStatus({{ fb.pk }}, this.value)">
+                  {% for val, label in fb.STATUS_CHOICES %}
+                  <option value="{{ val }}" {% if fb.status == val %}selected{% endif %}>{{ label }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+              <td style="display:flex; gap:6px;">
+                <button class="btn-xs" onclick="viewFeedback({{ fb.pk }}, '{{ fb.full_name|escapejs }}', '{{ fb.email|escapejs }}', '{{ fb.stars|escapejs }}', '{{ fb.message|escapejs }}')">View</button>
+                <button class="btn-xs danger" onclick="deleteFeedback({{ fb.pk }})">Delete</button>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="8" style="text-align:center; color:var(--text-secondary); padding:24px;">No feedback submitted yet.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if feedbacks|length > 6 %}
+      <div style="text-align:center; margin-top:14px;">
+        <button class="btn-xs" id="fbToggleBtn" onclick="toggleExtraRows('fb-extra-row', 'fbToggleBtn', {{ feedbacks|length }})">View All ({{ feedbacks|length }})</button>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- 6. CONTENT MANAGEMENT -->
+    <div class="admin-section-block dashboard-managed" id="section-content-articles" data-view="section-content-articles">
+      <h2 class="admin-section-title">Content Management — Articles</h2>
+      <p class="admin-page-sub" style="margin-bottom:16px;">Add new articles, edit existing details, delete outdated content, and upload related images from here.</p>
+
+      <section class="content-panel">
+        <div class="content-panel-header">
+          <div>
+            <h3 class="content-panel-title">Articles</h3>
+            <p class="content-panel-sub">{{ published_articles }} published article{{ published_articles|pluralize }} on the public Articles page.</p>
+          </div>
+          <button class="btn-xs primary" onclick="openContentModal('article')">Add Article</button>
+        </div>
+        <div class="table-wrap">
+          <table class="content-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Updated</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for art in all_articles %}
+              <tr id="article-row-{{ art.pk }}">
+                <td>
+                  {% if art.image %}
+                  <img src="{{ art.image.url }}" alt="{{ art.title }}" class="content-thumb">
+                  {% elif art.image_url %}
+                  <img src="{{ art.image_url }}" alt="{{ art.title }}" class="content-thumb">
+                  {% else %}
+                  <span class="content-thumb-empty">None</span>
+                  {% endif %}
+                </td>
+                <td>{{ art.title|truncatechars:48 }}</td>
+                <td>{{ art.category }}</td>
+                <td><span class="status-pill status-{{ art.status }}">{{ art.status|capfirst }}</span></td>
+                <td>{{ art.updated_at|date:"d M Y" }}</td>
+                <td>
+                  <div class="content-actions">
+                    <button class="btn-xs" onclick="openArticleEdit({{ art.pk }}, '{{ art.title|escapejs }}', '{{ art.category|escapejs }}', '{{ art.excerpt|escapejs }}', '{{ art.content|escapejs }}', '{{ art.image_url|escapejs }}', '{{ art.status|escapejs }}')">Edit</button>
+                    <button class="btn-xs" onclick="toggleArticle({{ art.pk }}, this)">Toggle</button>
+                    <button class="btn-xs danger" onclick="deleteContent('article', {{ art.pk }})">Delete</button>
+                  </div>
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="6" style="text-align:center; color:var(--text-secondary); padding:24px;">No articles yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <div class="admin-section-block dashboard-managed" id="section-content-events" data-view="section-content-events">
+      <h2 class="admin-section-title">Content Management — Events</h2>
+      <p class="admin-page-sub" style="margin-bottom:16px;">Events are split into Upcoming and Previous. Add new events, edit existing details, delete outdated entries, and upload related images from here.</p>
+
+      <section class="content-panel">
+        <div class="content-panel-header">
+          <div>
+            <h3 class="content-panel-title">Upcoming Events</h3>
+            <p class="content-panel-sub">{{ upcoming_events }} upcoming event{{ upcoming_events|pluralize }} listed for visitors.</p>
+          </div>
+          <button class="btn-xs primary" onclick="openContentModal('event')">Add Event</button>
+        </div>
+        <div class="table-wrap">
+          <table class="content-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for ev in upcoming_events_list %}
+              <tr id="event-row-{{ ev.pk }}">
+                <td>
+                  {% if ev.image %}
+                  <img src="{{ ev.image.url }}" alt="{{ ev.title }}" class="content-thumb">
+                  {% elif ev.gallery_images.first %}
+                  <img src="{{ ev.gallery_images.first.image.url }}" alt="{{ ev.title }}" class="content-thumb">
+                  {% else %}
+                  <span class="content-thumb-empty">None</span>
+                  {% endif %}
+                </td>
+                <td>{{ ev.title|truncatechars:48 }}</td>
+                <td>{{ ev.event_type }}</td>
+                <td>{{ ev.event_date|date:"Y-m-d" }}</td>
+                <td><span class="status-pill status-approved">Upcoming</span></td>
+                <td>
+                  <div class="content-actions">
+                    <button class="btn-xs" onclick="openEventEdit({{ ev.pk }}, '{{ ev.title|escapejs }}', '{{ ev.event_type|escapejs }}', '{{ ev.event_date|date:'Y-m-d' }}', '{{ ev.location|escapejs }}', '{{ ev.description|escapejs }}', '{{ ev.is_upcoming|yesno:'true,false' }}')">Edit</button>
+                    <button class="btn-xs" onclick="toggleEvent({{ ev.pk }}, this)">Toggle</button>
+                    <button class="btn-xs danger" onclick="deleteContent('event', {{ ev.pk }})">Delete</button>
+                  </div>
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="6" style="text-align:center; color:var(--text-secondary); padding:24px;">No upcoming events yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="content-panel">
+        <div class="content-panel-header">
+          <div>
+            <h3 class="content-panel-title">Previous Events</h3>
+            <p class="content-panel-sub">Past events that have already taken place.</p>
+          </div>
+          <button class="btn-xs primary" onclick="openContentModal('event')">Add Event</button>
+        </div>
+        <div class="table-wrap">
+          <table class="content-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for ev in previous_events_list %}
+              <tr id="event-row-{{ ev.pk }}">
+                <td>
+                  {% if ev.image %}
+                  <img src="{{ ev.image.url }}" alt="{{ ev.title }}" class="content-thumb">
+                  {% elif ev.gallery_images.first %}
+                  <img src="{{ ev.gallery_images.first.image.url }}" alt="{{ ev.title }}" class="content-thumb">
+                  {% else %}
+                  <span class="content-thumb-empty">None</span>
+                  {% endif %}
+                </td>
+                <td>{{ ev.title|truncatechars:48 }}</td>
+                <td>{{ ev.event_type }}</td>
+                <td>{{ ev.event_date|date:"Y-m-d" }}</td>
+                <td><span class="status-pill status-closed">Past</span></td>
+                <td>
+                  <div class="content-actions">
+                    <button class="btn-xs" onclick="openEventEdit({{ ev.pk }}, '{{ ev.title|escapejs }}', '{{ ev.event_type|escapejs }}', '{{ ev.event_date|date:'Y-m-d' }}', '{{ ev.location|escapejs }}', '{{ ev.description|escapejs }}', '{{ ev.is_upcoming|yesno:'true,false' }}')">Edit</button>
+                    <button class="btn-xs" onclick="toggleEvent({{ ev.pk }}, this)">Toggle</button>
+                    <button class="btn-xs danger" onclick="deleteContent('event', {{ ev.pk }})">Delete</button>
+                  </div>
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="6" style="text-align:center; color:var(--text-secondary); padding:24px;">No previous events yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <div class="admin-section-block dashboard-managed" id="section-content-services" data-view="section-content-services">
+      <h2 class="admin-section-title">Content Management — AI Services</h2>
+      <p class="admin-page-sub" style="margin-bottom:16px;">Add new services, edit existing details, delete outdated entries, and upload related images from here.</p>
+
+      <section class="content-panel">
+        <div class="content-panel-header">
+          <div>
+            <h3 class="content-panel-title">AI Services</h3>
+            <p class="content-panel-sub">{{ active_services }} active service{{ active_services|pluralize }} shown in the service catalogue.</p>
+          </div>
+          <button class="btn-xs primary" onclick="openContentModal('service')">Add Service</button>
+        </div>
+        <div class="table-wrap">
+          <table class="content-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Service</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for svc in all_services %}
+              <tr id="service-row-{{ svc.pk }}">
+                <td>
+                  {% if svc.image %}
+                  <img src="{{ svc.image.url }}" alt="{{ svc.title }}" class="content-thumb">
+                  {% else %}
+                  <span class="content-thumb-empty">{{ svc.icon }}</span>
+                  {% endif %}
+                </td>
+                <td>{{ svc.icon }} {{ svc.title|truncatechars:42 }}</td>
+                <td>{{ svc.description|truncatechars:64 }}</td>
+                <td><span class="status-pill {% if svc.is_active %}status-approved{% else %}status-closed{% endif %}">{% if svc.is_active %}Active{% else %}Inactive{% endif %}</span></td>
+                <td>
+                  <div class="content-actions">
+                    <button class="btn-xs" onclick="openServiceEdit({{ svc.pk }}, '{{ svc.icon|escapejs }}', '{{ svc.title|escapejs }}', '{{ svc.description|escapejs }}', '{{ svc.is_active|yesno:'true,false' }}')">Edit</button>
+                    <button class="btn-xs danger" onclick="deleteContent('service', {{ svc.pk }})">Delete</button>
+                  </div>
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="5" style="text-align:center; color:var(--text-secondary); padding:24px;">No services yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- 7. CHATBOT MANAGEMENT -->
+    <div class="admin-section-block dashboard-managed" id="section-chatbot" data-view="section-chatbot">
+      <h2 class="admin-section-title" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+        Chatbot Management
+        <button class="btn-xs primary" onclick="openAddChatbotModal()">+ Add Response</button>
+      </h2>
+      <p class="admin-page-sub" style="margin-bottom:16px;">Manage the chatbot question-and-answer responses stored in the database. Update answers to ensure the chatbot provides accurate and current information to users.</p>
+      <div class="table-wrap">
+        <table class="chatbot-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Question</th>
+              <th>Current Answer</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in chatbot_items %}
+            <tr id="chatbot-row-{{ item.pk }}" class="{% if forloop.counter > 6 %}chatbot-extra-row{% endif %}" {% if forloop.counter > 6 %}style="display:none;"{% endif %}>
+              <td style="color:var(--text-secondary);">{{ forloop.counter }}</td>
+              <td>{{ item.question|truncatechars:60 }}</td>
+              <td style="color:var(--text-secondary);">{{ item.answer|truncatechars:60 }}</td>
+              <td><span class="status-pill {% if item.is_active %}status-approved{% else %}status-closed{% endif %}">{% if item.is_active %}Active{% else %}Inactive{% endif %}</span></td>
+              <td>
+                <button class="btn-xs primary" onclick="editChatbot({{ item.pk }}, '{{ item.question|escapejs }}', '{{ item.answer|escapejs }}')">Edit Response</button>
+                <button class="btn-xs danger" onclick="deleteChatbot({{ item.pk }})">Delete</button>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" style="text-align:center; color:var(--text-secondary); padding:24px;">No chatbot responses configured yet. Add via Django admin.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if chatbot_items|length > 6 %}
+      <div style="text-align:center; margin-top:14px;">
+        <button class="btn-xs" id="chatbotToggleBtn" onclick="toggleExtraRows('chatbot-extra-row', 'chatbotToggleBtn', {{ chatbot_items|length }})">View All ({{ chatbot_items|length }})</button>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- 8. ANALYTICS -->
+    <div class="admin-section-block dashboard-managed is-active" id="section-analytics" data-view="home">
+      <h2 class="admin-section-title">Analytics &amp; Reporting</h2>
+      <p class="admin-page-sub" style="margin-bottom:16px;">Monitor system usage statistics and track enquiry processing rates. This data supports ongoing system evaluation and performance reporting.</p>
+      <div class="analytics-grid">
+        <div class="analytics-card">
+          <div class="a-label">Total Enquiries</div>
+          <div class="a-value">{{ total_enquiries }}</div>
+          <div class="a-trend">Submitted via Contact page</div>
+        </div>
+        <div class="analytics-card">
+          <div class="a-label">Pending Enquiries</div>
+          <div class="a-value">{{ pending_enquiries }}</div>
+          <div class="a-trend">Awaiting admin review</div>
+        </div>
+        <div class="analytics-card">
+          <div class="a-label">Feedback Submissions</div>
+          <div class="a-value">{{ total_feedback }}</div>
+          <div class="a-trend">{{ approved_feedback_count }} approved</div>
+        </div>
+        <div class="analytics-card">
+          <div class="a-label">Published Articles</div>
+          <div class="a-value">{{ published_articles }}</div>
+          <div class="a-trend">Live on Articles page</div>
+        </div>
+        <div class="analytics-card">
+          <div class="a-label">Upcoming Events</div>
+          <div class="a-value">{{ upcoming_events }}</div>
+          <div class="a-trend">Listed on Events page</div>
+        </div>
+        <div class="analytics-card">
+          <div class="a-label">Active AI Services</div>
+          <div class="a-value">{{ active_services }}</div>
+          <div class="a-trend">Listed on Services page</div>
+        </div>
+        <div class="analytics-card">
+          <div class="a-label">Chatbot Responses</div>
+          <div class="a-value">{{ chatbot_responses }}</div>
+          <div class="a-trend">Active response entries</div>
+        </div>
+        <div class="analytics-card">
+          <div class="a-label">Feedback Approval Rate</div>
+          <div class="a-value">{% if total_feedback %}{% widthratio approved_feedback_count total_feedback 100 %}%{% else %}0%{% endif %}</div>
+          <div class="a-trend">{{ approved_feedback_count }} of {{ total_feedback }} approved</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  </div>
+  <!-- /admin-layout -->
+
+  <!-- MODALS -->
+
+  <!-- Enquiry View Modal -->
+  <div class="modal-overlay" id="enquiryModal">
+    <div class="modal-box">
+      <h3 id="modalEnqName"></h3>
+      <p id="modalEnqEmail" style="margin-bottom:8px;"></p>
+      <p id="modalEnqSubject" style="font-weight:600; color:var(--text-primary); margin-bottom:12px;"></p>
+      <p id="modalEnqMessage" style="color:var(--text-secondary); white-space:pre-wrap;"></p>
+      <div class="modal-actions" style="margin-top:20px;">
+        <button class="btn-xs" onclick="closeModal('enquiryModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feedback View Modal -->
+  <div class="modal-overlay" id="feedbackModal">
+    <div class="modal-box">
+      <h3 id="modalFbName"></h3>
+      <p id="modalFbEmail" style="color:var(--accent); font-size:13px; margin-bottom:8px;"></p>
+      <p id="modalFbStars" style="font-size:20px; margin-bottom:12px;"></p>
+      <p id="modalFbMessage" style="color:var(--text-secondary); white-space:pre-wrap;"></p>
+      <div class="modal-actions" style="margin-top:20px;">
+        <button class="btn-xs" onclick="closeModal('feedbackModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chatbot Edit Modal -->
+  <div class="modal-overlay" id="chatbotModal">
+    <div class="modal-box">
+      <h3>Update Chatbot Response</h3>
+      <p id="chatbotModalQuestion" style="font-weight:600; color:var(--text-primary); margin-bottom:12px;"></p>
+      <input type="hidden" id="chatbotEditPk">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">New Answer</label>
+      <textarea id="chatbotEditAnswer" rows="4" placeholder="Enter the updated chatbot response..."></textarea>
+      <div class="modal-actions">
+        <button class="btn-xs" onclick="closeModal('chatbotModal')">Cancel</button>
+        <button class="btn-xs primary" onclick="saveChatbotResponse()">Save Response</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chatbot Add Modal -->
+  <div class="modal-overlay" id="addChatbotModal">
+    <div class="modal-box">
+      <h3>Add Chatbot Response</h3>
+      <p>Create a new question-and-answer pair for the chatbot.</p>
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Question</label>
+      <input type="text" id="addChatbotQuestion" placeholder="e.g. What services do you offer?">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Answer</label>
+      <textarea id="addChatbotAnswer" rows="4" placeholder="Enter the chatbot's response..."></textarea>
+      <div class="modal-actions">
+        <button class="btn-xs" onclick="closeModal('addChatbotModal')">Cancel</button>
+        <button class="btn-xs primary" onclick="submitAddChatbot()">Add Response</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Article Add Modal -->
+  <div class="modal-overlay" id="addArticleModal">
+    <div class="modal-box">
+      <h3>Add Article</h3>
+      <p>Create a new article for the Articles page.</p>
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Title</label>
+      <input type="text" id="addArticleTitle" placeholder="Article title">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Category</label>
+      <input type="text" id="addArticleCategory" placeholder="e.g. Machine Learning">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Excerpt</label>
+      <textarea id="addArticleExcerpt" rows="2" placeholder="Short summary shown on the Articles page..."></textarea>
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Full Content</label>
+      <textarea id="addArticleContent" rows="4" placeholder="Full article content (optional)..."></textarea>
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Image Upload</label>
+      <input type="file" id="addArticleImage" accept="image/*">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Image URL (optional)</label>
+      <input type="url" id="addArticleImageUrl" placeholder="https://example.com/image.jpg">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Status</label>
+      <select id="addArticleStatus" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-primary); font-family:inherit; font-size:14px; box-sizing:border-box; margin-bottom:16px;">
+        <option value="published">Published</option>
+        <option value="draft">Draft</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn-xs" onclick="closeModal('addArticleModal')">Cancel</button>
+        <button class="btn-xs primary" onclick="submitAddArticle()">Add Article</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Add Modal -->
+  <div class="modal-overlay" id="addEventModal">
+    <div class="modal-box">
+      <h3>Add Event</h3>
+      <p>Create a new event for the Events page.</p>
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Title</label>
+      <input type="text" id="addEventTitle" placeholder="Event title">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Event Type</label>
+      <select id="addEventType" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-primary); font-family:inherit; font-size:14px; box-sizing:border-box; margin-bottom:16px;">
+        <option value="Workshop">Workshop</option>
+        <option value="Conference">Conference</option>
+        <option value="Webinar">Webinar</option>
+        <option value="Symposium">Symposium</option>
+        <option value="Seminar">Seminar</option>
+      </select>
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Event Date <span style="font-weight:400; text-transform:none; letter-spacing:0;">(YYYY-MM-DD)</span></label>
+      <input type="text" id="addEventDate" placeholder="e.g. 2024-03-12" pattern="\d{4}-\d{2}-\d{2}" inputmode="numeric" maxlength="10">
+      <p style="font-size:11px; color:var(--text-secondary); margin:-12px 0 16px;">Type the date as Year-Month-Day, e.g. 2026-07-15.</p>
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Location</label>
+      <input type="text" id="addEventLocation" placeholder="e.g. London, UK">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Description</label>
+      <textarea id="addEventDescription" rows="3" placeholder="Event description..."></textarea>
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Cover Image</label>
+      <input type="file" id="addEventImage" accept="image/*">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Gallery Images</label>
+      <input type="file" id="addEventGalleryImages" accept="image/*" multiple>
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Status</label>
+      <select id="addEventUpcoming" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-primary); font-family:inherit; font-size:14px; box-sizing:border-box; margin-bottom:16px;">
+        <option value="true">Upcoming</option>
+        <option value="false">Past</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn-xs" onclick="closeModal('addEventModal')">Cancel</button>
+        <button class="btn-xs primary" onclick="submitAddEvent()">Add Event</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Service Add Modal -->
+  <div class="modal-overlay" id="addServiceModal">
+    <div class="modal-box">
+      <h3>Add AI Service</h3>
+      <p>Create a new service listing for the Services page.</p>
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Icon (emoji)</label>
+      <input type="text" id="addServiceIcon" placeholder="🤖" maxlength="10">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Title</label>
+      <input type="text" id="addServiceTitle" placeholder="Service title">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Description</label>
+      <textarea id="addServiceDescription" rows="3" placeholder="Service description..."></textarea>
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Service Image</label>
+      <input type="file" id="addServiceImage" accept="image/*">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Status</label>
+      <select id="addServiceActive" style="width:100%; padding:10px 14px; border-radius:8px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-primary); font-family:inherit; font-size:14px; box-sizing:border-box; margin-bottom:16px;">
+        <option value="true">Active</option>
+        <option value="false">Inactive</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn-xs" onclick="closeModal('addServiceModal')">Cancel</button>
+        <button class="btn-xs primary" onclick="submitAddService()">Add Service</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Article Edit Modal -->
+  <div class="modal-overlay" id="editArticleModal">
+    <div class="modal-box">
+      <h3>Edit Article</h3>
+      <p>Update article text, status, and related image.</p>
+      <input type="hidden" id="editArticlePk">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Title</label>
+      <input type="text" id="editArticleTitle">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Category</label>
+      <input type="text" id="editArticleCategory">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Excerpt</label>
+      <textarea id="editArticleExcerpt" rows="2"></textarea>
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Full Content</label>
+      <textarea id="editArticleContent" rows="4"></textarea>
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Replace Image</label>
+      <input type="file" id="editArticleImage" accept="image/*">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Image URL</label>
+      <input type="url" id="editArticleImageUrl">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Status</label>
+      <select id="editArticleStatus">
+        <option value="published">Published</option>
+        <option value="draft">Draft</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn-xs" onclick="closeModal('editArticleModal')">Cancel</button>
+        <button class="btn-xs primary" onclick="submitEditArticle()">Save Article</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Edit Modal -->
+  <div class="modal-overlay" id="editEventModal">
+    <div class="modal-box">
+      <h3>Edit Event</h3>
+      <p>Update event details and upload a related event image.</p>
+      <input type="hidden" id="editEventPk">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Title</label>
+      <input type="text" id="editEventTitle">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Event Type</label>
+      <select id="editEventType">
+        <option value="Workshop">Workshop</option>
+        <option value="Conference">Conference</option>
+        <option value="Webinar">Webinar</option>
+        <option value="Symposium">Symposium</option>
+        <option value="Seminar">Seminar</option>
+      </select>
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Event Date <span style="font-weight:400; text-transform:none; letter-spacing:0;">(YYYY-MM-DD)</span></label>
+      <input type="text" id="editEventDate" placeholder="e.g. 2024-03-12" pattern="\d{4}-\d{2}-\d{2}" inputmode="numeric" maxlength="10">
+      <p style="font-size:11px; color:var(--text-secondary); margin:-12px 0 16px;">Type the date as Year-Month-Day, e.g. 2026-07-15.</p>
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Location</label>
+      <input type="text" id="editEventLocation">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Description</label>
+      <textarea id="editEventDescription" rows="3"></textarea>
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Replace Cover Image</label>
+      <input type="file" id="editEventImage" accept="image/*">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Add Gallery Images</label>
+      <input type="file" id="editEventGalleryImages" accept="image/*" multiple>
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Status</label>
+      <select id="editEventUpcoming">
+        <option value="true">Upcoming</option>
+        <option value="false">Past</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn-xs" onclick="closeModal('editEventModal')">Cancel</button>
+        <button class="btn-xs primary" onclick="submitEditEvent()">Save Event</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Service Edit Modal -->
+  <div class="modal-overlay" id="editServiceModal">
+    <div class="modal-box">
+      <h3>Edit AI Service</h3>
+      <p>Update the service catalogue entry and related image.</p>
+      <input type="hidden" id="editServicePk">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Icon (emoji)</label>
+      <input type="text" id="editServiceIcon" maxlength="10">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Title</label>
+      <input type="text" id="editServiceTitle">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Description</label>
+      <textarea id="editServiceDescription" rows="3"></textarea>
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Replace Image</label>
+      <input type="file" id="editServiceImage" accept="image/*">
+      <label style="font-size:13px; color:var(--text-secondary); display:block; margin-bottom:6px;">Status</label>
+      <select id="editServiceActive">
+        <option value="true">Active</option>
+        <option value="false">Inactive</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn-xs" onclick="closeModal('editServiceModal')">Cancel</button>
+        <button class="btn-xs primary" onclick="submitEditService()">Save Service</button>
+      </div>
+    </div>
+  </div>
+
+
+  <footer class="footer" style="margin-top:0;">
+    <div class="container">
+      <div class="footer-bottom">
+        <p class="footer-copyright">© 2025 AI Solutions Website — Admin Panel</p>
+        <div class="footer-legal">
+          <a href="{% url 'index' %}">Return to Website</a>
+          <a href="{% url 'admin_login' %}">Login Page</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/script.js' %}"></script>
+  <script>
+    const CSRF = '{{ csrf_token }}';
+
+    // ── Sidebar navigation ──
+    function goToSection(e, id) {
+      e.preventDefault();
+      document.querySelectorAll('.dashboard-managed').forEach(section => {
+        section.classList.toggle('is-active', section.dataset.view === id);
+      });
+      setActiveSidebarLink(id);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setActiveSidebarLink(id) {
+      document.querySelectorAll('.sidebar-link[data-target]').forEach(link => {
+        link.classList.toggle('active', link.dataset.target === id);
+      });
+      const isContentSection = id.indexOf('section-content-') === 0;
+      const submenu = document.getElementById('contentSubmenu');
+      const caret = document.getElementById('contentCaret');
+      const toggle = document.getElementById('contentDropdownToggle');
+      if (isContentSection) {
+        submenu.classList.add('open');
+        caret.classList.add('open');
+        toggle.classList.add('active');
+      } else {
+        toggle.classList.remove('active');
+      }
+    }
+
+    function toggleContentDropdown(e) {
+      e.preventDefault();
+      document.getElementById('contentSubmenu').classList.toggle('open');
+      document.getElementById('contentCaret').classList.toggle('open');
+    }
+
+    // ── Status updates ──
+    function updateEnquiryStatus(pk, status) {
+      fetch(`/ajax/enquiry/${pk}/status/`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': CSRF},
+        body: `status=${encodeURIComponent(status)}`
+      }).then(r => r.json()).then(d => {
+        if (!d.success) alert('Failed to update status.');
+      });
+    }
+
+    function updateFeedbackStatus(pk, status) {
+      fetch(`/ajax/feedback/${pk}/status/`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': CSRF},
+        body: `status=${encodeURIComponent(status)}`
+      }).then(r => r.json()).then(d => {
+        if (!d.success) alert('Failed to update status.');
+      });
+    }
+
+    // ── Deletion ──
+    function deleteEnquiry(pk) {
+      if (!confirm('Delete this enquiry? This cannot be undone.')) return;
+      fetch(`/ajax/enquiry/${pk}/delete/`, {
+        method: 'POST',
+        headers: {'X-CSRFToken': CSRF}
+      }).then(r => r.json()).then(d => {
+        if (d.success) document.getElementById(`enq-row-${pk}`).remove();
+        else alert('Delete failed.');
+      });
+    }
+
+    function deleteFeedback(pk) {
+      if (!confirm('Delete this feedback entry? This cannot be undone.')) return;
+      fetch(`/ajax/feedback/${pk}/delete/`, {
+        method: 'POST',
+        headers: {'X-CSRFToken': CSRF}
+      }).then(r => r.json()).then(d => {
+        if (d.success) document.getElementById(`fb-row-${pk}`).remove();
+        else alert('Delete failed.');
+      });
+    }
+
+    // ── Toggle article/event ──
+    function toggleArticle(pk, btn) {
+      fetch(`/ajax/article/${pk}/toggle/`, {
+        method: 'POST', headers: {'X-CSRFToken': CSRF}
+      }).then(r => r.json()).then(d => {
+        if (d.success) {
+          const pill = btn.previousElementSibling;
+          pill.textContent = d.status === 'published' ? 'Published' : 'Draft';
+          pill.className = `status-pill status-${d.status}`;
+        }
+      });
+    }
+
+    function toggleEvent(pk, btn) {
+      fetch(`/ajax/event/${pk}/toggle/`, {
+        method: 'POST', headers: {'X-CSRFToken': CSRF}
+      }).then(r => r.json()).then(d => {
+        if (d.success) {
+          const pill = btn.previousElementSibling;
+          pill.textContent = d.is_upcoming ? 'Upcoming' : 'Past';
+          pill.className = d.is_upcoming ? 'status-pill status-approved' : 'status-pill status-closed';
+        }
+      });
+    }
+
+    // ── Modals ──
+    function viewEnquiry(pk, name, email, subject, message) {
+      document.getElementById('modalEnqName').textContent = name;
+      document.getElementById('modalEnqEmail').textContent = email;
+      document.getElementById('modalEnqSubject').textContent = subject;
+      document.getElementById('modalEnqMessage').textContent = message;
+      document.getElementById('enquiryModal').classList.add('open');
+    }
+
+    function viewFeedback(pk, name, email, stars, message) {
+      document.getElementById('modalFbName').textContent = name;
+      document.getElementById('modalFbEmail').textContent = email;
+      document.getElementById('modalFbStars').textContent = stars;
+      document.getElementById('modalFbMessage').textContent = message;
+      document.getElementById('feedbackModal').classList.add('open');
+    }
+
+    function editChatbot(pk, question, answer) {
+      document.getElementById('chatbotEditPk').value = pk;
+      document.getElementById('chatbotModalQuestion').textContent = question;
+      document.getElementById('chatbotEditAnswer').value = answer;
+      document.getElementById('chatbotModal').classList.add('open');
+    }
+
+    function saveChatbotResponse() {
+      const pk = document.getElementById('chatbotEditPk').value;
+      const answer = document.getElementById('chatbotEditAnswer').value.trim();
+      if (!answer) { alert('Answer cannot be empty.'); return; }
+      fetch(`/ajax/chatbot/${pk}/save/`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': CSRF},
+        body: `answer=${encodeURIComponent(answer)}`
+      }).then(r => r.json()).then(d => {
+        if (d.success) { closeModal('chatbotModal'); location.reload(); }
+        else alert('Save failed.');
+      });
+    }
+
+    function deleteChatbot(pk) {
+      if (!confirm('Delete this chatbot response? This cannot be undone.')) return;
+      fetch(`/ajax/chatbot/${pk}/delete/`, {
+        method: 'POST',
+        headers: {'X-CSRFToken': CSRF}
+      }).then(r => r.json()).then(d => {
+        if (d.success) document.getElementById(`chatbot-row-${pk}`).remove();
+        else alert('Delete failed.');
+      });
+    }
+
+    function toggleExtraRows(rowClass, btnId, totalCount) {
+      const extraRows = document.querySelectorAll('.' + rowClass);
+      const btn = document.getElementById(btnId);
+      const isHidden = extraRows.length && extraRows[0].style.display === 'none';
+      extraRows.forEach(row => { row.style.display = isHidden ? 'table-row' : 'none'; });
+      btn.textContent = isHidden ? 'Show Less' : `View All (${totalCount})`;
+    }
+
+    // ── Add: Chatbot Response ──
+    function openAddChatbotModal() {
+      document.getElementById('addChatbotQuestion').value = '';
+      document.getElementById('addChatbotAnswer').value = '';
+      document.getElementById('addChatbotModal').classList.add('open');
+    }
+
+    function submitAddChatbot() {
+      const question = document.getElementById('addChatbotQuestion').value.trim();
+      const answer = document.getElementById('addChatbotAnswer').value.trim();
+      if (!question || !answer) { alert('Question and answer are required.'); return; }
+      fetch('/ajax/chatbot/add/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': CSRF},
+        body: `question=${encodeURIComponent(question)}&answer=${encodeURIComponent(answer)}`
+      }).then(r => r.json()).then(d => {
+        if (d.success) { closeModal('addChatbotModal'); location.reload(); }
+        else alert(d.error || 'Add failed.');
+      });
+    }
+
+    // ── Add/edit: Article / Event / Service ──
+    function openContentModal(type) {
+      if (type === 'article') document.getElementById('addArticleModal').classList.add('open');
+      if (type === 'event') document.getElementById('addEventModal').classList.add('open');
+      if (type === 'service') document.getElementById('addServiceModal').classList.add('open');
+    }
+
+    function submitAddArticle() {
+      const title = document.getElementById('addArticleTitle').value.trim();
+      const category = document.getElementById('addArticleCategory').value.trim();
+      const excerpt = document.getElementById('addArticleExcerpt').value.trim();
+      const content = document.getElementById('addArticleContent').value.trim();
+      const image_url = document.getElementById('addArticleImageUrl').value.trim();
+      const status = document.getElementById('addArticleStatus').value;
+      if (!title || !excerpt) { alert('Title and excerpt are required.'); return; }
+      const body = new FormData();
+      body.append('title', title);
+      body.append('category', category);
+      body.append('excerpt', excerpt);
+      body.append('content', content);
+      body.append('image_url', image_url);
+      body.append('status', status);
+      appendImageIfSelected(body, 'addArticleImage');
+      fetch('/ajax/article/add/', {
+        method: 'POST',
+        headers: {'X-CSRFToken': CSRF},
+        body
+      }).then(r => r.json()).then(d => {
+        if (d.success) { closeModal('addArticleModal'); location.reload(); }
+        else alert(d.error || 'Add failed.');
+      });
+    }
+
+    function submitAddEvent() {
+      const title = document.getElementById('addEventTitle').value.trim();
+      const event_type = document.getElementById('addEventType').value;
+      const event_date = document.getElementById('addEventDate').value.trim();
+      const location_ = document.getElementById('addEventLocation').value.trim();
+      const description = document.getElementById('addEventDescription').value.trim();
+      const is_upcoming = document.getElementById('addEventUpcoming').value;
+      if (!title || !event_date || !location_) { alert('Title, date and location are required.'); return; }
+      if (!isValidDate(event_date)) { alert('Please enter the date as YYYY-MM-DD, e.g. 2026-07-15.'); return; }
+      const body = new FormData();
+      body.append('title', title);
+      body.append('event_type', event_type);
+      body.append('event_date', event_date);
+      body.append('location', location_);
+      body.append('description', description);
+      body.append('is_upcoming', is_upcoming);
+      appendImageIfSelected(body, 'addEventImage');
+      appendImagesIfSelected(body, 'addEventGalleryImages', 'gallery_images');
+      fetch('/ajax/event/add/', {
+        method: 'POST',
+        headers: {'X-CSRFToken': CSRF},
+        body
+      }).then(r => r.json()).then(d => {
+        if (d.success) { closeModal('addEventModal'); location.reload(); }
+        else alert(d.error || 'Add failed.');
+      });
+    }
+
+    function submitAddService() {
+      const icon = document.getElementById('addServiceIcon').value.trim() || '🤖';
+      const title = document.getElementById('addServiceTitle').value.trim();
+      const description = document.getElementById('addServiceDescription').value.trim();
+      const is_active = document.getElementById('addServiceActive').value;
+      if (!title || !description) { alert('Title and description are required.'); return; }
+      const body = new FormData();
+      body.append('icon', icon);
+      body.append('title', title);
+      body.append('description', description);
+      body.append('is_active', is_active);
+      appendImageIfSelected(body, 'addServiceImage');
+      fetch('/ajax/service/add/', {
+        method: 'POST',
+        headers: {'X-CSRFToken': CSRF},
+        body
+      }).then(r => r.json()).then(d => {
+        if (d.success) { closeModal('addServiceModal'); location.reload(); }
+        else alert(d.error || 'Add failed.');
+      });
+    }
+
+    function appendImageIfSelected(body, inputId) {
+      const input = document.getElementById(inputId);
+      if (input && input.files && input.files[0]) body.append('image', input.files[0]);
+    }
+
+    function appendImagesIfSelected(body, inputId, fieldName) {
+      const input = document.getElementById(inputId);
+      if (!input || !input.files) return;
+      Array.from(input.files).forEach(file => body.append(fieldName, file));
+    }
+
+    // Validates a YYYY-MM-DD string typed into the simple text date fields.
+    function isValidDate(value) {
+      const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+      if (!match) return false;
+      const year = parseInt(match[1], 10), month = parseInt(match[2], 10), day = parseInt(match[3], 10);
+      if (month < 1 || month > 12 || day < 1 || day > 31) return false;
+      const d = new Date(year, month - 1, day);
+      return d.getFullYear() === year && d.getMonth() === month - 1 && d.getDate() === day;
+    }
+
+    function openArticleEdit(pk, title, category, excerpt, content, imageUrl, status) {
+      document.getElementById('editArticlePk').value = pk;
+      document.getElementById('editArticleTitle').value = title;
+      document.getElementById('editArticleCategory').value = category;
+      document.getElementById('editArticleExcerpt').value = excerpt;
+      document.getElementById('editArticleContent').value = content;
+      document.getElementById('editArticleImageUrl').value = imageUrl;
+      document.getElementById('editArticleStatus').value = status;
+      document.getElementById('editArticleImage').value = '';
+      document.getElementById('editArticleModal').classList.add('open');
+    }
+
+    function submitEditArticle() {
+      const pk = document.getElementById('editArticlePk').value;
+      const body = new FormData();
+      body.append('title', document.getElementById('editArticleTitle').value.trim());
+      body.append('category', document.getElementById('editArticleCategory').value.trim());
+      body.append('excerpt', document.getElementById('editArticleExcerpt').value.trim());
+      body.append('content', document.getElementById('editArticleContent').value.trim());
+      body.append('image_url', document.getElementById('editArticleImageUrl').value.trim());
+      body.append('status', document.getElementById('editArticleStatus').value);
+      appendImageIfSelected(body, 'editArticleImage');
+      if (!body.get('title') || !body.get('excerpt')) { alert('Title and excerpt are required.'); return; }
+      saveContent(`/ajax/article/${pk}/edit/`, body, 'editArticleModal');
+    }
+
+    function openEventEdit(pk, title, eventType, eventDate, location_, description, isUpcoming) {
+      document.getElementById('editEventPk').value = pk;
+      document.getElementById('editEventTitle').value = title;
+      document.getElementById('editEventType').value = eventType;
+      document.getElementById('editEventDate').value = eventDate;
+      document.getElementById('editEventLocation').value = location_;
+      document.getElementById('editEventDescription').value = description;
+      document.getElementById('editEventUpcoming').value = isUpcoming;
+      document.getElementById('editEventImage').value = '';
+      document.getElementById('editEventModal').classList.add('open');
+    }
+
+    function submitEditEvent() {
+      const pk = document.getElementById('editEventPk').value;
+      const event_date = document.getElementById('editEventDate').value.trim();
+      const body = new FormData();
+      body.append('title', document.getElementById('editEventTitle').value.trim());
+      body.append('event_type', document.getElementById('editEventType').value);
+      body.append('event_date', event_date);
+      body.append('location', document.getElementById('editEventLocation').value.trim());
+      body.append('description', document.getElementById('editEventDescription').value.trim());
+      body.append('is_upcoming', document.getElementById('editEventUpcoming').value);
+      appendImageIfSelected(body, 'editEventImage');
+      appendImagesIfSelected(body, 'editEventGalleryImages', 'gallery_images');
+      if (!body.get('title') || !body.get('event_date') || !body.get('location')) { alert('Title, date and location are required.'); return; }
+      if (!isValidDate(event_date)) { alert('Please enter the date as YYYY-MM-DD, e.g. 2026-07-15.'); return; }
+      saveContent(`/ajax/event/${pk}/edit/`, body, 'editEventModal');
+    }
+
+    function openServiceEdit(pk, icon, title, description, isActive) {
+      document.getElementById('editServicePk').value = pk;
+      document.getElementById('editServiceIcon').value = icon;
+      document.getElementById('editServiceTitle').value = title;
+      document.getElementById('editServiceDescription').value = description;
+      document.getElementById('editServiceActive').value = isActive;
+      document.getElementById('editServiceImage').value = '';
+      document.getElementById('editServiceModal').classList.add('open');
+    }
+
+    function submitEditService() {
+      const pk = document.getElementById('editServicePk').value;
+      const body = new FormData();
+      body.append('icon', document.getElementById('editServiceIcon').value.trim() || '🤖');
+      body.append('title', document.getElementById('editServiceTitle').value.trim());
+      body.append('description', document.getElementById('editServiceDescription').value.trim());
+      body.append('is_active', document.getElementById('editServiceActive').value);
+      appendImageIfSelected(body, 'editServiceImage');
+      if (!body.get('title') || !body.get('description')) { alert('Title and description are required.'); return; }
+      saveContent(`/ajax/service/${pk}/edit/`, body, 'editServiceModal');
+    }
+
+    function saveContent(url, body, modalId) {
+      fetch(url, {
+        method: 'POST',
+        headers: {'X-CSRFToken': CSRF},
+        body
+      }).then(r => r.json()).then(d => {
+        if (d.success) { closeModal(modalId); location.reload(); }
+        else alert(d.error || 'Save failed.');
+      });
+    }
+
+    function deleteContent(type, pk) {
+      if (!confirm(`Delete this ${type}? This cannot be undone.`)) return;
+      fetch(`/ajax/${type}/${pk}/delete/`, {
+        method: 'POST',
+        headers: {'X-CSRFToken': CSRF}
+      }).then(r => r.json()).then(d => {
+        if (d.success) document.getElementById(`${type}-row-${pk}`).remove();
+        else alert('Delete failed.');
+      });
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    // Close modals on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('open');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Contact Us - AI-Solutions{% endblock %}
+{% block nav_contact %}active{% endblock %}
+
+{% block content %}
+
+  <section class="page-hero">
+    <div class="container">
+      <div class="page-hero-content">
+        <h1 class="page-hero-title">Contact Us</h1>
+        <p class="page-hero-subtitle">Submit an enquiry, request information about AI services, or ask questions about the platform. We will review your message and respond promptly.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--light">
+    <div class="container">
+      <div class="contact-wrapper">
+
+        {% if success %}
+        <div class="success-msg show" id="successMsg">
+          <div class="success-icon">✓</div>
+          <h3>Enquiry Submitted</h3>
+          <p>Your enquiry has been received. The administrator will review your message and respond to your email address as soon as possible.</p>
+        </div>
+        {% else %}
+        <form class="contact-form" id="contactForm" method="POST" action="{% url 'contact' %}">
+          {% csrf_token %}
+
+          <div class="form-intro">
+            <h2 class="form-title">Tell us what you need</h2>
+            <p class="form-subtext">Complete the fields below and your enquiry will be logged for review.</p>
+          </div>
+
+          {% if form.errors %}
+          <div class="form-error-banner">Please correct the errors below before submitting.</div>
+          {% endif %}
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="id_full_name">Full Name</label>
+              {{ form.full_name }}
+              {% if form.full_name.errors %}<p class="field-error">{{ form.full_name.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="id_email">Email Address</label>
+              {{ form.email }}
+              {% if form.email.errors %}<p class="field-error">{{ form.email.errors.0 }}</p>{% endif %}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="id_subject">Subject</label>
+            {{ form.subject }}
+            {% if form.subject.errors %}<p class="field-error">{{ form.subject.errors.0 }}</p>{% endif %}
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="id_message">Enquiry Message</label>
+            {{ form.message }}
+            {% if form.message.errors %}<p class="field-error">{{ form.message.errors.0 }}</p>{% endif %}
+          </div>
+
+          <div class="form-group form-submit-row">
+            <button type="submit" class="btn btn-primary btn-full">Submit Enquiry</button>
+          </div>
+        </form>
+        {% endif %}
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="container">
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">✉</div>
+          <h3 class="card-title">Email Support</h3>
+          <p class="card-description">For AI service, platform, or system questions, send an email and we will respond promptly.</p>
+          <p class="card-contact-detail">support@ai-solutions.com</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">☎</div>
+          <h3 class="card-title">Phone Support</h3>
+          <p class="card-description">Contact the support team for service information or platform navigation assistance.</p>
+          <p class="card-contact-detail">1234567890</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">⌖</div>
+          <h3 class="card-title">System Office</h3>
+          <p class="card-description">The AI-Solutions platform is maintained and supported from our operating office.</p>
+          <p class="card-contact-detail">London, United Kingdom</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

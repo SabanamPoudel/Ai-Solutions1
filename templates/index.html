@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}AI-Solutions - AI Services & Enquiry Management System{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block content %}
+
+  <section class="hero">
+    <div class="container">
+      <div class="hero-layout">
+        <div class="hero-content">
+          <h1 class="hero-headline">A clearer way to explore, request, and manage AI support</h1>
+          <p class="hero-subheadline">AI-Solutions brings service discovery, enquiries, articles, events, feedback, and administration into one focused platform for students, researchers, and organisations exploring artificial intelligence.</p>
+          <div class="hero-actions">
+            <a href="{% url 'services' %}" class="btn btn-primary">Explore Services</a>
+            <a href="{% url 'contact' %}" class="btn btn-secondary">Submit an Enquiry</a>
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="hero-visual-card">
+            <div class="hero-app-topbar">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="hero-app-body">
+              <div class="hero-app-sidebar">
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <div class="hero-app-main">
+                <div class="hero-app-title"></div>
+                <div class="hero-app-chart">
+                  <span class="bar-1"></span>
+                  <span class="bar-2"></span>
+                  <span class="bar-3"></span>
+                  <span class="bar-4"></span>
+                  <span class="bar-5"></span>
+                </div>
+                <div class="hero-app-grid">
+                  <span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="hero-floating-card hero-floating-card--one">
+            <strong>24</strong>
+            <span>New enquiries</span>
+          </div>
+          <div class="hero-floating-card hero-floating-card--two">
+            <strong>94%</strong>
+            <span>Resolved requests</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="trusted-strip">
+    <div class="container">
+      <div class="trusted-label">One Platform For The Complete AI Service Journey</div>
+      <div class="trusted-logos">
+        <span class="trusted-name">Enquiry Management</span>
+        <span class="trusted-name">Feedback System</span>
+        <span class="trusted-name">AI Services</span>
+        <span class="trusted-name">Article Publishing</span>
+        <span class="trusted-name">Event Management</span>
+        <span class="trusted-name">Admin Dashboard</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-headline">AI Solutions Tailored to Your Needs</h2>
+        <p class="section-subtext">From intelligent consultation to data-driven automation, our platform offers a focused range of AI services designed to address real-world challenges.</p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">🤖</div>
+          <h3 class="card-title">AI Consultation</h3>
+          <p class="card-description">Get expert guidance on how artificial intelligence can be applied to your specific domain. Submit an enquiry and our team will assess your needs and recommend suitable AI approaches.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚙️</div>
+          <h3 class="card-title">Machine Learning Solutions</h3>
+          <p class="card-description">We develop and deploy custom machine learning models tailored to classification, prediction, and pattern recognition tasks across various industries and datasets.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <h3 class="card-title">Data Analytics &amp; Insights</h3>
+          <p class="card-description">Transform raw data into meaningful insights. Our analytics service identifies trends, visualises patterns, and supports evidence-based decision making for your organisation.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔄</div>
+          <h3 class="card-title">Business Automation</h3>
+          <p class="card-description">Reduce repetitive manual tasks through intelligent automation. We map your workflows and implement AI-driven processes that improve efficiency and reduce human error.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔍</div>
+          <h3 class="card-title">Decision Support</h3>
+          <p class="card-description">AI-powered tools that help organisations make faster, more informed decisions by processing large volumes of structured and unstructured data in real time.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🧠</div>
+          <h3 class="card-title">Neural Network Design</h3>
+          <p class="card-description">Design and training of custom neural network architectures for image recognition, natural language processing, and complex predictive modelling use cases.</p>
+        </div>
+      </div>
+      <div class="section-cta">
+        <a href="{% url 'services' %}" class="btn btn-secondary">View All Services →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-intro">
+        <h2 class="section-headline">Everything users need, connected in one place</h2>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">6</div>
+          <div class="stat-label">AI Services Available</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">12+</div>
+          <div class="stat-label">Articles Published</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">6+</div>
+          <div class="stat-label">Upcoming Events</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Enquiries Tracked</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="platform-showcase">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-headline">Designed around the full AI support workflow</h2>
+        <p class="section-subtext">The platform combines public information pages with structured administration tools, making it easier to guide users from discovery to response.</p>
+      </div>
+      <div class="showcase-grid">
+        <div class="showcase-panel showcase-panel--large">
+          <h3>Explore services, articles, and events without friction</h3>
+          <p>Users can quickly understand available AI services, read educational content, and find relevant events from a simple public website.</p>
+          <a href="{% url 'services' %}" class="read-more">View Services</a>
+        </div>
+        <div class="showcase-panel">
+          <h3>Submit structured enquiries</h3>
+          <p>Contact forms capture the right details and keep requests ready for review.</p>
+        </div>
+        <div class="showcase-panel">
+          <h3>Track responses centrally</h3>
+          <p>The admin dashboard helps monitor enquiries, feedback, events, and content.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--light">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-headline">Stay Informed on AI &amp; Technology</h2>
+        <p class="section-subtext">Browse our curated collection of educational articles covering artificial intelligence, machine learning, and data science topics.</p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">📝</div>
+          <h3 class="card-title">Introduction to Machine Learning</h3>
+          <p class="card-description">A beginner-friendly overview of supervised and unsupervised learning, covering core concepts, common algorithms, and real-world applications across industries.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🧠</div>
+          <h3 class="card-title">How Neural Networks Learn</h3>
+          <p class="card-description">An accessible explanation of how artificial neural networks process information, adjust weights through backpropagation, and improve performance over training iterations.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔍</div>
+          <h3 class="card-title">AI Ethics &amp; Responsible Use</h3>
+          <p class="card-description">Exploring the ethical considerations surrounding AI deployment, including fairness, transparency, data privacy, and the importance of human oversight in automated systems.</p>
+        </div>
+      </div>
+      <div class="section-cta">
+        <a href="{% url 'articles' %}" class="btn btn-secondary">Browse All Articles →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-headline">What Users Say About the System</h2>
+        <p class="section-subtext">Read feedback submitted by users about their experience navigating the AI-Solutions website and using its features.</p>
+      </div>
+      <div class="grid-2">
+        <div class="testimonial-card">
+          <div class="quote-mark">"</div>
+          <div class="star-rating">★★★★★</div>
+          <p class="testimonial-text">The website is well-organised and easy to navigate. I was able to find the services I needed and submit my enquiry without any confusion. The confirmation message after submitting was a nice touch.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">👤</div>
+            <div>
+              <div class="author-name">Priya M.</div>
+              <div class="author-role">Website User</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="quote-mark">"</div>
+          <div class="star-rating">★★★★☆</div>
+          <p class="testimonial-text">I found the articles section really informative and relevant to my studies. The event listings are clearly displayed with all the details I needed. I would like to see more events added in the future.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">👤</div>
+            <div>
+              <div class="author-name">James T.</div>
+              <div class="author-role">Website User</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section-cta">
+        <a href="{% url 'feedback' %}" class="btn btn-secondary">Read All Feedback →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-banner">
+    <div class="container">
+      <h2 class="section-headline">Ready to Explore AI Services or Ask a Question?</h2>
+      <p class="section-subtext">Browse our available AI services, register for an upcoming event, or submit an enquiry and our team will get back to you promptly.</p>
+      <div class="cta-banner-actions">
+        <a href="{% url 'services' %}" class="btn btn-primary">Explore Services</a>
+        <a href="{% url 'contact' %}" class="btn btn-secondary">Submit an Enquiry</a>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}
