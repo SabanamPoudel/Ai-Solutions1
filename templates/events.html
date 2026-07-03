@@ -26,8 +26,6 @@
         <article class="event-card">
           {% if event.image %}
           <img src="{{ event.image.url }}" alt="{{ event.title }}" class="event-card-image">
-          {% else %}
-          <img src="{% static 'images/events/ai-conference-2024.jpg' %}" alt="{{ event.title }}" class="event-card-image">
           {% endif %}
           <div class="event-date-badge">
             <div class="event-day">{{ event.event_date|date:"d" }}</div>
@@ -45,7 +43,6 @@
         </article>
         {% empty %}
         <article class="event-card">
-          <img src="{% static 'images/events/ai-conference-2024.jpg' %}" alt="Artificial Intelligence Conference 2025" class="event-card-image">
           <div class="event-date-badge">
             <div class="event-day">15</div>
             <div class="event-month">May 2025</div>
