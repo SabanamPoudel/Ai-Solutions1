@@ -96,12 +96,89 @@
           </div>
         </template>
         {% empty %}
-        <div class="gallery-item gallery-placeholder"><span>AI Workshop 2024</span></div>
-        <div class="gallery-item gallery-placeholder"><span>Machine Learning Seminar</span></div>
-        <div class="gallery-item gallery-placeholder"><span>AI Conference 2024</span></div>
-        <div class="gallery-item gallery-placeholder"><span>Research Symposium</span></div>
-        <div class="gallery-item gallery-placeholder"><span>Data Science Webinar</span></div>
-        <div class="gallery-item gallery-placeholder"><span>Deep Learning Workshop</span></div>
+        <button type="button" class="gallery-item gallery-item-clickable" data-template-id="fallback-event-ai-workshop">
+          <img src="{% static 'images/events/ai-workshop-2024.jpg' %}" alt="AI Workshop 2024">
+          <div class="gallery-item-caption">AI Workshop 2024</div>
+        </button>
+        <template id="fallback-event-ai-workshop">
+          <span class="event-type">Workshop</span>
+          <h2 class="site-modal-title">AI Workshop 2024</h2>
+          <p class="event-location">Previous Event</p>
+          <p class="site-modal-text">A hands-on workshop introducing practical artificial intelligence concepts and tools.</p>
+          <div class="event-modal-gallery">
+            <img src="{% static 'images/events/ai-workshop-2024.jpg' %}" alt="AI Workshop 2024">
+          </div>
+        </template>
+
+        <button type="button" class="gallery-item gallery-item-clickable" data-template-id="fallback-event-machine-learning">
+          <img src="{% static 'images/events/machine-learning-seminar.jpg' %}" alt="Machine Learning Seminar">
+          <div class="gallery-item-caption">Machine Learning Seminar</div>
+        </button>
+        <template id="fallback-event-machine-learning">
+          <span class="event-type">Seminar</span>
+          <h2 class="site-modal-title">Machine Learning Seminar</h2>
+          <p class="event-location">Previous Event</p>
+          <p class="site-modal-text">A seminar covering machine learning foundations, model training, and applied research topics.</p>
+          <div class="event-modal-gallery">
+            <img src="{% static 'images/events/machine-learning-seminar.jpg' %}" alt="Machine Learning Seminar">
+          </div>
+        </template>
+
+        <button type="button" class="gallery-item gallery-item-clickable" data-template-id="fallback-event-ai-conference">
+          <img src="{% static 'images/events/ai-conference-2024.jpg' %}" alt="AI Conference 2024">
+          <div class="gallery-item-caption">AI Conference 2024</div>
+        </button>
+        <template id="fallback-event-ai-conference">
+          <span class="event-type">Conference</span>
+          <h2 class="site-modal-title">AI Conference 2024</h2>
+          <p class="event-location">Previous Event</p>
+          <p class="site-modal-text">A conference bringing together students, researchers, and practitioners to discuss AI progress.</p>
+          <div class="event-modal-gallery">
+            <img src="{% static 'images/events/ai-conference-2024.jpg' %}" alt="AI Conference 2024">
+          </div>
+        </template>
+
+        <button type="button" class="gallery-item gallery-item-clickable" data-template-id="fallback-event-research-symposium">
+          <img src="{% static 'images/events/research-symposium.webp' %}" alt="Research Symposium">
+          <div class="gallery-item-caption">Research Symposium</div>
+        </button>
+        <template id="fallback-event-research-symposium">
+          <span class="event-type">Symposium</span>
+          <h2 class="site-modal-title">Research Symposium</h2>
+          <p class="event-location">Previous Event</p>
+          <p class="site-modal-text">A research-focused event exploring intelligent systems, analytics, and emerging AI methods.</p>
+          <div class="event-modal-gallery">
+            <img src="{% static 'images/events/research-symposium.webp' %}" alt="Research Symposium">
+          </div>
+        </template>
+
+        <button type="button" class="gallery-item gallery-item-clickable" data-template-id="fallback-event-data-science">
+          <img src="{% static 'images/events/data-science-webinar.jpg' %}" alt="Data Science Webinar">
+          <div class="gallery-item-caption">Data Science Webinar</div>
+        </button>
+        <template id="fallback-event-data-science">
+          <span class="event-type">Webinar</span>
+          <h2 class="site-modal-title">Data Science Webinar</h2>
+          <p class="event-location">Previous Event</p>
+          <p class="site-modal-text">An online session focused on data analysis, visualisation, and evidence-based decision making.</p>
+          <div class="event-modal-gallery">
+            <img src="{% static 'images/events/data-science-webinar.jpg' %}" alt="Data Science Webinar">
+          </div>
+        </template>
+
+        <button type="button" class="gallery-item gallery-item-clickable" data-template-id="fallback-event-deep-learning">
+          <img src="{% static 'images/events/deep-learning-workshop.jpg' %}" alt="Deep Learning Workshop">
+          <div class="gallery-item-caption">Deep Learning Workshop</div>
+        </button>
+        <template id="fallback-event-deep-learning">
+          <span class="event-type">Workshop</span>
+          <h2 class="site-modal-title">Deep Learning Workshop</h2>
+          <p class="event-location">Previous Event</p>
+          <p class="site-modal-text">A technical workshop introducing neural networks and deep learning workflows.</p>
+          <div class="event-modal-gallery">
+            <img src="{% static 'images/events/deep-learning-workshop.jpg' %}" alt="Deep Learning Workshop">
+          </div>
+        </template>
         {% endfor %}
       </div>
     </div>
