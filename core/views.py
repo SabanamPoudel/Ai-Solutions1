@@ -47,7 +47,7 @@ def services(request):
 
 
 def articles(request):
-    published_articles = Article.objects.filter(status='published')
+    published_articles = Article.objects.all().order_by('-created_at')
     return render(request, 'articles.html', {'articles': published_articles})
 
 
