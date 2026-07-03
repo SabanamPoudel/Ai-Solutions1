@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: ai-solutions
+    env: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn ai_solutions.wsgi:application"
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.12.0"

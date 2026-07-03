@@ -17,57 +17,96 @@
   <section class="section section--light">
     <div class="container">
       <div class="contact-wrapper">
+        <div class="contact-grid">
+          <div class="contact-panel">
+            {% if success %}
+            <div class="success-msg show" id="successMsg">
+              <div class="success-icon">✓</div>
+              <h3>Enquiry Submitted</h3>
+              <p>Your enquiry has been received. The administrator will review your message and respond to your email address as soon as possible.</p>
+            </div>
+            {% else %}
+            <form class="contact-form" id="contactForm" method="POST" action="{% url 'contact' %}">
+              {% csrf_token %}
 
-        {% if success %}
-        <div class="success-msg show" id="successMsg">
-          <div class="success-icon">✓</div>
-          <h3>Enquiry Submitted</h3>
-          <p>Your enquiry has been received. The administrator will review your message and respond to your email address as soon as possible.</p>
+              <div class="form-intro">
+                <h2 class="form-title">Tell us what you need</h2>
+                <p class="form-subtext">Complete the fields below and your enquiry will be logged for review.</p>
+              </div>
+
+              {% if form.errors %}
+              <div class="form-error-banner">Please correct the errors below before submitting.</div>
+              {% endif %}
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label" for="id_full_name">Full Name</label>
+                  {{ form.full_name }}
+                  {% if form.full_name.errors %}<p class="field-error">{{ form.full_name.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="id_email">Email Address</label>
+                  {{ form.email }}
+                  {% if form.email.errors %}<p class="field-error">{{ form.email.errors.0 }}</p>{% endif %}
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="id_subject">Subject</label>
+                {{ form.subject }}
+                {% if form.subject.errors %}<p class="field-error">{{ form.subject.errors.0 }}</p>{% endif %}
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="id_message">Enquiry Message</label>
+                {{ form.message }}
+                {% if form.message.errors %}<p class="field-error">{{ form.message.errors.0 }}</p>{% endif %}
+              </div>
+
+              <div class="form-group form-submit-row">
+                <button type="submit" class="btn btn-primary btn-full">Submit Enquiry</button>
+              </div>
+            </form>
+            {% endif %}
+          </div>
+
+          <aside class="contact-panel contact-location-panel">
+            <div class="location-card">
+              <div class="location-header">
+                <span class="location-tag">Our Location</span>
+                <h2>London, United Kingdom</h2>
+                <p class="location-subtitle">Visit the AI Solutions office in the capital city of the UK.</p>
+              </div>
+
+              <div class="map-frame-wrapper">
+                <iframe class="map-frame"
+                  src="https://www.openstreetmap.org/export/embed.html?bbox=-0.1410%2C51.5008%2C-0.1132%2C51.5132&amp;layer=mapnik&amp;marker=51.5074%2C-0.1278"
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                  aria-label="Map showing London, United Kingdom"></iframe>
+              </div>
+
+              <div class="location-meta">
+                <div class="info-pill">Office hours: Mon–Fri 9am–6pm</div>
+                <p class="location-blurb">Our support and enquiry desk is managed from London. Send your request and our team will get back to you quickly.</p>
+                <div class="location-details">
+                  <div>
+                    <span class="detail-label">Office:</span>
+                    <span>AI Solutions HQ</span>
+                  </div>
+                  <div>
+                    <span class="detail-label">Address:</span>
+                    <span>London, United Kingdom</span>
+                  </div>
+                  <div>
+                    <span class="detail-label">Email:</span>
+                    <a href="mailto:support@ai-solutions.com">support@ai-solutions.com</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
         </div>
-        {% else %}
-        <form class="contact-form" id="contactForm" method="POST" action="{% url 'contact' %}">
-          {% csrf_token %}
-
-          <div class="form-intro">
-            <h2 class="form-title">Tell us what you need</h2>
-            <p class="form-subtext">Complete the fields below and your enquiry will be logged for review.</p>
-          </div>
-
-          {% if form.errors %}
-          <div class="form-error-banner">Please correct the errors below before submitting.</div>
-          {% endif %}
-
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label class="form-label" for="id_full_name">Full Name</label>
-              {{ form.full_name }}
-              {% if form.full_name.errors %}<p class="field-error">{{ form.full_name.errors.0 }}</p>{% endif %}
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="id_email">Email Address</label>
-              {{ form.email }}
-              {% if form.email.errors %}<p class="field-error">{{ form.email.errors.0 }}</p>{% endif %}
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="id_subject">Subject</label>
-            {{ form.subject }}
-            {% if form.subject.errors %}<p class="field-error">{{ form.subject.errors.0 }}</p>{% endif %}
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="id_message">Enquiry Message</label>
-            {{ form.message }}
-            {% if form.message.errors %}<p class="field-error">{{ form.message.errors.0 }}</p>{% endif %}
-          </div>
-
-          <div class="form-group form-submit-row">
-            <button type="submit" class="btn btn-primary btn-full">Submit Enquiry</button>
-          </div>
-        </form>
-        {% endif %}
-
       </div>
     </div>
   </section>

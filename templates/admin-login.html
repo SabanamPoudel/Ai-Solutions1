@@ -19,13 +19,15 @@
       <h1 class="login-title">Admin Portal</h1>
       <p class="login-sub">Sign in to access the dashboard and manage enquiries.</p>
 
-      {% if error %}
+      {% if error_code %}
       <div class="error-msg show" id="loginError">
+        {% if error_code == 'credentials' %}
         Invalid username or password. Please try again.
-      </div>
-      {% else %}
-      <div class="error-msg" id="loginError">
-        Invalid username or password. Please try again.
+        {% elif error_code == 'captcha' %}
+        Please complete the captcha challenge correctly.
+        {% elif error_code == 'captcha_config' %}
+        Captcha is not configured. Please set RECAPTCHA keys.
+        {% endif %}
       </div>
       {% endif %}
 
