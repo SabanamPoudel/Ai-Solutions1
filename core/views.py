@@ -1,7 +1,4 @@
 import random
-import json
-import urllib.parse
-import urllib.request
 
 from django.conf import settings
 from django.shortcuts import render, redirect
@@ -117,40 +114,18 @@ def admin_login(request):
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
-        recaptcha_response = request.POST.get('g-recaptcha-response', '').strip()
 
-        if not recaptcha_response:
-            error_code = 'captcha'
-        elif not settings.RECAPTCHA_SECRET_KEY:
-            error_code = 'captcha_config'
+        # Authenticate user without captcha
+        user = authenticate(request, username=username, password=password)
+        if user is not None and user.is_staff:
+            login(request, user)
+            return redirect('admin_dashboard')
         else:
-            payload = urllib.parse.urlencode({
-                'secret': settings.RECAPTCHA_SECRET_KEY,
-                'response': recaptcha_response,
-            }).encode('utf-8')
-            request_obj = urllib.request.Request(
-                'https://www.google.com/recaptcha/api/siteverify',
-                data=payload,
-                method='POST'
-            )
-            try:
-                with urllib.request.urlopen(request_obj, timeout=10) as response:
-                    recaptcha_result = json.loads(response.read().decode('utf-8'))
-            except Exception:
-                recaptcha_result = {'success': False}
-
-            if not recaptcha_result.get('success'):
-                error_code = 'captcha'
-            else:
-                user = authenticate(request, username=username, password=password)
-                if user is not None and user.is_staff:
-                    login(request, user)
-                    return redirect('admin_dashboard')
-                error_code = 'credentials'
+            error_code = 'credentials'
 
     return render(request, 'admin-login.html', {
         'error_code': error_code,
-        'recaptcha_site_key': settings.RECAPTCHA_SITE_KEY,
+        'recaptcha_site_key': '',
     })
 
 
