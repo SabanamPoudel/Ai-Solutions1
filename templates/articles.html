@@ -47,7 +47,7 @@
         </article>
         {% empty %}
         <article class="article-card">
-          <div class="article-image-shell"><span>Fundamentals</span></div>
+          <img src="{% static 'images/articles/intro-to-ai.jpg' %}" alt="Introduction to Artificial Intelligence" class="article-image">
           <div class="article-body">
             <span class="category-pill">Fundamentals</span>
             <h3 class="article-title">Introduction to Artificial Intelligence</h3>
@@ -56,13 +56,13 @@
                     class="read-more article-read-more"
                     data-title="Introduction to Artificial Intelligence"
                     data-category="Fundamentals"
-                    data-content="An overview of artificial intelligence, its history, and the key branches that shape the field today.">
+                    data-content="Artificial intelligence is the field of building computer systems that can perform tasks normally associated with human thinking, such as learning, reasoning, planning, understanding language, and recognising patterns. Modern AI combines data, algorithms, and computing power to support decisions, automate repetitive work, and solve problems across education, business, healthcare, transport, and research.">
               Read More
             </button>
           </div>
         </article>
         <article class="article-card">
-          <div class="article-image-shell"><span>Machine Learning</span></div>
+          <img src="{% static 'images/articles/machine-learning.jpg' %}" alt="Machine Learning Applications" class="article-image">
           <div class="article-body">
             <span class="category-pill">Machine Learning</span>
             <h3 class="article-title">Machine Learning Applications</h3>
@@ -71,13 +71,13 @@
                     class="read-more article-read-more"
                     data-title="Machine Learning Applications"
                     data-category="Machine Learning"
-                    data-content="A concise look at supervised, unsupervised, and reinforcement learning approaches in practice.">
+                    data-content="Machine learning allows systems to improve by learning patterns from data rather than following only fixed instructions. Supervised learning is used for prediction and classification, unsupervised learning helps discover hidden groups or patterns, and reinforcement learning trains systems through rewards. These methods support recommendations, fraud detection, forecasting, image analysis, and many other practical AI services.">
               Read More
             </button>
           </div>
         </article>
         <article class="article-card">
-          <div class="article-image-shell"><span>Applications</span></div>
+          <img src="{% static 'images/articles/ai-applications.jpg' %}" alt="AI in Healthcare and Transportation" class="article-image">
           <div class="article-body">
             <span class="category-pill">Applications</span>
             <h3 class="article-title">AI in Healthcare and Transportation</h3>
@@ -86,7 +86,52 @@
                     class="read-more article-read-more"
                     data-title="AI in Healthcare and Transportation"
                     data-category="Applications"
-                    data-content="How AI supports diagnostics, outcome prediction, route optimisation, and operational decision-making.">
+                    data-content="AI is increasingly used in healthcare to support diagnosis, analyse medical images, identify risk factors, and improve patient workflow. In transportation, AI helps with route planning, traffic prediction, fleet optimisation, and safety monitoring. These applications are most useful when they assist human experts, improve speed, and make complex information easier to interpret.">
+              Read More
+            </button>
+          </div>
+        </article>
+        <article class="article-card">
+          <img src="{% static 'images/articles/neural-network.jpg' %}" alt="How Neural Networks Learn" class="article-image">
+          <div class="article-body">
+            <span class="category-pill">Deep Learning</span>
+            <h3 class="article-title">How Neural Networks Learn</h3>
+            <p class="article-excerpt">A simple explanation of layers, weights, training data, and how neural networks improve over time.</p>
+            <button type="button"
+                    class="read-more article-read-more"
+                    data-title="How Neural Networks Learn"
+                    data-category="Deep Learning"
+                    data-content="Neural networks are inspired by connected layers of simple processing units. During training, the network receives examples, makes predictions, compares them with the expected result, and adjusts internal weights to reduce error. With enough good-quality data, neural networks can learn patterns in images, text, audio, and numerical records, making them powerful tools for recognition and prediction tasks.">
+              Read More
+            </button>
+          </div>
+        </article>
+        <article class="article-card">
+          <img src="{% static 'images/articles/predictive-analytics.jpg' %}" alt="Predictive Analytics with AI" class="article-image">
+          <div class="article-body">
+            <span class="category-pill">Analytics</span>
+            <h3 class="article-title">Predictive Analytics with AI</h3>
+            <p class="article-excerpt">How historical data can be used to forecast demand, identify risks, and support smarter planning.</p>
+            <button type="button"
+                    class="read-more article-read-more"
+                    data-title="Predictive Analytics with AI"
+                    data-category="Analytics"
+                    data-content="Predictive analytics uses previous data to estimate what may happen next. AI models can detect trends, seasonal behaviour, risk signals, and relationships that are difficult to spot manually. Organisations use predictive analytics for demand forecasting, customer behaviour analysis, maintenance planning, academic performance support, and operational decision making.">
+              Read More
+            </button>
+          </div>
+        </article>
+        <article class="article-card">
+          <img src="{% static 'images/articles/automation.jpg' %}" alt="Automation and Intelligent Workflows" class="article-image">
+          <div class="article-body">
+            <span class="category-pill">Automation</span>
+            <h3 class="article-title">Automation and Intelligent Workflows</h3>
+            <p class="article-excerpt">A practical look at using AI to reduce repetitive work and improve process consistency.</p>
+            <button type="button"
+                    class="read-more article-read-more"
+                    data-title="Automation and Intelligent Workflows"
+                    data-category="Automation"
+                    data-content="Automation uses software to complete repeatable tasks with less manual effort. When combined with AI, workflows can classify requests, extract information, recommend next steps, and route tasks to the right people. Good automation does not simply replace human work; it removes friction so teams can spend more time on judgement, creativity, and problem solving.">
               Read More
             </button>
           </div>
