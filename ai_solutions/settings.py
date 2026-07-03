@@ -7,7 +7,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-ai-solutions-cet333-a
 
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,*.onrender.com').split(',')
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'ai-solutions1.onrender.com', '*.onrender.com']
+if not DEBUG:
+    ALLOWED_HOSTS.extend(os.environ.get('ALLOWED_HOSTS', '').split(',')) if os.environ.get('ALLOWED_HOSTS') else None
 
 INSTALLED_APPS = [
     'django.contrib.admin',
